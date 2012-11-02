@@ -125,5 +125,6 @@ DEPENDENCIES
   lookup_by!
   pg
   pry
+  rake
   rspec-rails (~> 2.11.0)
   simplecov

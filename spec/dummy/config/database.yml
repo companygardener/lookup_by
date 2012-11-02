@@ -15,7 +15,7 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: dummy_development
+  database: lookup_by_development
   pool: 5
   username: dummy
   password:
@@ -40,11 +40,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   adapter: postgresql
-  encoding: unicode
-  database: dummy_test
-  pool: 5
-  username: dummy
-  password:
+  database: lookup_by_test
+  username: postgres
 
 production:
   adapter: postgresql

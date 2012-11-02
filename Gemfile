@@ -5,4 +5,7 @@ source "http://rubygems.org"
 # development dependencies will be added by default to the :development group.
 gemspec
 
-gem "simplecov", require: false, group: :test
+group :test do
+  gem "rake"
+  gem "simplecov", require: false
+end

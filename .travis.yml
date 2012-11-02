@@ -1,0 +1,11 @@
+language: ruby
+rvm:
+  - 1.9.3
+  - rbx-19mode
+  - jruby-19mode
+  - ruby-head
+  - jruby-head
+services:
+  - postgresql
+before_script:
+  - sh -c "cd spec/dummy && RAILS_ENV=test rake db:migrate:reset"
