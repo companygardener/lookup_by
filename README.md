@@ -1,5 +1,4 @@
-LookupBy
-========
+# LookupBy [![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png)](http://travis-ci.org/companygardener/lookup_by)
 
 ### Description
 
