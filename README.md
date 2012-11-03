@@ -163,6 +163,12 @@ never garbage collected._
     #   Note: Only works if its attributes are nullable
     lookup_by :column_name, cache: 20, find_or_create: true
 
+### Normalizing values
+
+    # Normalize
+    #   Run through the your attribute's setter
+    lookup_by :column_name, normalize: true
+
 Integration
 ===========
 

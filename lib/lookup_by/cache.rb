@@ -2,7 +2,7 @@ module LookupBy
   class Cache
     attr_reader :klass, :primary_key
     attr_reader :cache, :stats
-    attr_reader :field, :order, :type, :limit, :find, :write
+    attr_reader :field, :order, :type, :limit, :find, :write, :normalize
 
     def initialize(klass, options = {})
       @klass       = klass
@@ -12,6 +12,7 @@ module LookupBy
       @order       = options[:order] || field
       @read        = options[:find]
       @write       = options[:find_or_create]
+      @normalize   = options[:normalize]
 
       @stats       = { db: Hash.new(0), cache: Hash.new(0) }
 
@@ -55,6 +56,8 @@ module LookupBy
     def fetch(value)
       increment :cache, :get
 
+      value = clean(value) if normalize?
+
       found = cache_read(value) if cache?
       found ||= db_read(value)  if read_through?
 
@@ -68,6 +71,12 @@ module LookupBy
     end
 
   private
+
+    def clean(value)
+      return value if value.is_a? Fixnum
+
+      klass.new(field => value).send(field)
+    end
 
     def cache_read(value)
       if value.is_a? Fixnum
@@ -102,9 +111,12 @@ module LookupBy
       type == :all
     end
 
-
     def write?
       !!write
+    end
+
+    def normalize?
+      !!normalize
     end
 
     def increment(type, stat)

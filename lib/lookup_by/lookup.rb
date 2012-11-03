@@ -7,7 +7,7 @@ module LookupBy
 
       def lookup_by(field, options = {})
         options.symbolize_keys!
-        options.assert_valid_keys :order, :cache, :find, :find_or_create, :raise
+        options.assert_valid_keys :order, :cache, :normalize, :find, :find_or_create, :raise
 
         raise "#{self} already uses lookup_by" if is_a? LookupBy::Lookup::ClassMethods
         raise "#{self} responds_to :[], needed for lookup_by"     if respond_to? :[]

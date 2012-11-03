@@ -25,8 +25,22 @@ describe LookupBy::Lookup do
     it_behaves_like "a proxy"
     it_behaves_like "a read-through proxy"
 
-    it "raises on db miss" do
+    it "returns nil on db miss" do
       subject["foo"].should be_nil
+    end
+  end
+
+  context "Status.lookup_by :column, normalize: true" do
+    subject { Status }
+
+    it_behaves_like "a lookup"
+    it_behaves_like "a proxy"
+    it_behaves_like "a read-through proxy"
+
+    it "normalizes the lookup field" do
+      status = subject.create(subject.lookup.field => "paid")
+
+      subject["  paid "].id.should == status.id
     end
   end
 
