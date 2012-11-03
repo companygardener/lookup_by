@@ -1,4 +1,7 @@
-# LookupBy [![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png)](http://travis-ci.org/companygardener/lookup_by)
+# LookupBy
+
+[![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png)](http://travis-ci.org/companygardener/lookup_by)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/companygardener/lookup_by)
 
 ### Description
 
