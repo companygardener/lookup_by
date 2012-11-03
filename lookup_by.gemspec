@@ -20,9 +20,4 @@ Gem::Specification.new do |gem|
   gem.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
 
   gem.add_dependency "rails", "~> 3.2.8"
-
-  gem.add_development_dependency "pg"
-  gem.add_development_dependency "pry"
-  gem.add_development_dependency "rspec-rails", "~> 2.11.0"
-  gem.add_development_dependency "simplecov"
 end
