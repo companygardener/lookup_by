@@ -32,7 +32,9 @@ module LookupBy
         strict = options[:strict]
         strict = true if strict.nil?
 
-        raise Error, "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
+        if table_exists?
+          raise Error, "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
+        end
 
         lookup_field = class_name.constantize.lookup.field
 

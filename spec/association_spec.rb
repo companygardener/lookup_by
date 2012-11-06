@@ -93,4 +93,10 @@ describe LookupBy::Association do
       expect { subject.street = "Dearborn Street" }.to change(Street, :count)
     end
   end
+
+  context "Missing.lookup_for :city" do
+    it "does not raise foreign key error when table hasn't been created" do
+      expect { require "missing"; }.to_not raise_error
+    end
+  end
 end
