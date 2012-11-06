@@ -14,6 +14,8 @@ module LookupBy
   module Association
     module MacroMethods
       def lookup_for field, options = {}
+        return unless table_exists?
+
         field = field.to_sym
 
         %W(#{field} raw_#{field} #{field}= #{field}_before_type_cast).map(&:to_sym).each do |method|
@@ -32,9 +34,7 @@ module LookupBy
         strict = options[:strict]
         strict = true if strict.nil?
 
-        if table_exists?
-          raise Error, "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
-        end
+        raise Error, "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
 
         lookup_field = class_name.constantize.lookup.field
 
