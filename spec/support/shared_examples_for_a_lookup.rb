@@ -121,12 +121,12 @@ end
 shared_examples "a write-through cache" do
   it_behaves_like "a write-through proxy"
 
-  it "caches new records" do
+  it "does not cache new records" do
     subject.lookup.reload
     found = subject["found"]
 
     subject.update(found.id, name: "missing")
-    subject[found.id].name.should eq "found"
+    subject[found.id].name.should eq "missing"
   end
 end
 

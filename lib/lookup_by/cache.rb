@@ -56,12 +56,14 @@ module LookupBy
     def fetch(value)
       increment :cache, :get
 
-      value = clean(value) if normalize?
+      value = clean(value)      if normalize?
 
       found = cache_read(value) if cache?
       found ||= db_read(value)  if read_through?
 
-      cache[found.id] = found if found && cache?
+      cache[found.id] = found   if found && cache?
+
+      found ||= db_write(value) if write?
 
       found
     end
@@ -90,17 +92,26 @@ module LookupBy
       found
     end
 
-    # TODO: Handle race condition on create! failure
     def db_read(value)
       increment :db, :get
 
-      column = value.is_a?(Fixnum) ? primary_key : field
-
-      found   = klass.where(column => value).first
-      found ||= klass.create!(column => value) if !found && write? && column != primary_key
+      found = klass.where(column_for(value) => value).first
 
       increment :db, found ? :hit : :miss
+
       found
+    end
+
+    # TODO: Handle race condition on create! failure
+    def db_write(value)
+      column = column_for(value)
+
+      found = klass.create!(column => value) if column != primary_key
+      found
+    end
+
+    def column_for(value)
+      value.is_a?(Fixnum) ? primary_key : field
     end
 
     def cache?
