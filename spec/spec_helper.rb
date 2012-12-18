@@ -1,8 +1,12 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 
-require "simplecov"
-SimpleCov.start
+GC.disable if defined?(GC) && GC.respond_to?(:disable)
+
+if ENV["COV"]
+  require "simplecov"
+  SimpleCov.start
+end
 
 begin
   require File.expand_path("../../config/environment", __FILE__)
