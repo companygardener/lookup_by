@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lookup_by (0.0.1)
+    lookup_by (0.0.2)
       rails (>= 3.0.0)
 
 GEM
