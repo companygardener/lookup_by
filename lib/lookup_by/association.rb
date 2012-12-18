@@ -47,7 +47,7 @@ module LookupBy
         @lookups ||= []
         @lookups << field
 
-        class_eval <<-METHODS
+        class_eval <<-METHODS, __FILE__, __LINE__.next
           def raw_#{field}
             #{lookup_object}
           end
