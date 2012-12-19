@@ -172,6 +172,15 @@ never garbage collected._
 Integration
 ===========
 
+### Cucumber
+
+LookupBy comes with a few cucumber steps. To use, `require` them
+from one of the ruby files under `features/support` (e.g. `env.rb`)
+
+    require 'lookup_by/cucumber'
+
+This provides `Given I reload the cache for $plural_class_name`.
+
 ### SimpleForm
 
     = simple_form_for @order do |f|
