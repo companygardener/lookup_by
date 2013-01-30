@@ -79,6 +79,10 @@ describe LookupBy::Lookup do
     it_behaves_like "a lookup"
     it_behaves_like "a cache"
     it_behaves_like "a read-through cache"
+
+    it "enables the LRU" do
+      subject.lookup.enabled.should be_true
+    end
   end
 
   context "IpAddress.lookup_by :column, cache: N, find_or_create: true" do
@@ -88,5 +92,9 @@ describe LookupBy::Lookup do
     it_behaves_like "a cache"
     it_behaves_like "a read-through cache"
     it_behaves_like "a write-through cache"
+
+    it "disables the LRU when RAILS_ENV=test" do
+      subject.lookup.enabled.should be_false
+    end
   end
 end

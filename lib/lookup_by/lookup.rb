@@ -25,7 +25,7 @@ module LookupBy
           unless field == :name || column_names.include?("name")
             alias_attribute :name, field
 
-            attr_accessible :name if accessible_attributes.include?(field)
+            attr_accessible :name if respond_to?(:accessible_attributes) && accessible_attributes.include?(field)
           end
 
           @lookup = Cache.new(self, options.merge(field: field))

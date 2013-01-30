@@ -4,6 +4,8 @@ module LookupBy
     attr_reader :cache, :stats
     attr_reader :field, :order, :type, :limit, :find, :write, :normalize
 
+    attr_accessor :enabled
+
     def initialize(klass, options = {})
       @klass       = klass
       @primary_key = klass.primary_key
@@ -13,6 +15,7 @@ module LookupBy
       @read        = options[:find]
       @write       = options[:find_or_create]
       @normalize   = options[:normalize]
+      @enabled     = true
 
       @stats       = { db: Hash.new(0), cache: Hash.new(0) }
 
@@ -21,17 +24,18 @@ module LookupBy
       case options[:cache]
       when true
         @type   = :all
-        @read   = false if @read.nil?
+        @read ||= false
       when ::Fixnum
         raise ArgumentError, "`#{@klass}.lookup_by :#{@field}` options[:find] must be true when caching N" if @read == false
 
-        @type   = :lru
-        @limit  = options[:cache]
-        @cache  = Rails.configuration.allow_concurrency ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
-        @read   = true
-        @write  = false if @write.nil?
+        @type    = :lru
+        @limit   = options[:cache]
+        @cache   = Rails.configuration.allow_concurrency ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
+        @read    = true
+        @write ||= false
+        @enabled = false if Rails.env.test? && write?
       else
-        @read   = true
+        @read    = true
       end
     end
 
@@ -115,7 +119,11 @@ module LookupBy
     end
 
     def cache?
-      !!type
+      !!type && enabled?
+    end
+
+    def enabled?
+      enabled
     end
 
     def cache_all?
