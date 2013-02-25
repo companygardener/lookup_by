@@ -39,6 +39,23 @@ shared_examples "a proxy" do
     subject.update(original.id, name: "updated")
     subject[original.id].name.should_not eq original.name
   end
+
+  it "allows .destroy_all" do
+    subject.destroy_all.should == []
+  end
+
+  it "allows .destroy" do
+    instance = subject.create(name: "foo")
+    subject.destroy(instance.id).should == instance
+  end
+
+  it "allows .delete_all" do
+    subject.delete_all.should == 0
+  end
+
+  it "allows .delete" do
+    subject.delete(1).should == 0
+  end
 end
 
 shared_examples "a cache" do
@@ -56,6 +73,22 @@ shared_examples "a cache" do
 
     subject.lookup.enabled = was_enabled
   end
+
+  it "raises on .destroy_all" do
+    expect { subject.destroy_all }.to raise_error NotImplementedError, /destroy_all.*not supported/
+  end
+
+  it "raises on .destroy(id)" do
+    expect { subject.destroy(1) }.to raise_error NotImplementedError, /destroy.*not supported/
+  end
+
+  it "raises on .delete_all" do
+    expect { subject.delete_all }.to raise_error NotImplementedError, /delete_all.*not supported/
+  end
+
+  it "raises on .delete(id)" do
+    expect { subject.delete(1) }.to raise_error NotImplementedError, /delete.*not supported/
+  end
 end
 
 shared_examples "a strict cache" do
@@ -65,6 +98,12 @@ shared_examples "a strict cache" do
 
   it "caches .all" do
     expect { subject.create(name: "add") }.to_not change(subject, :all)
+  end
+
+  it "reloads .all when called with args" do
+    new = subject.create(name: "new")
+    subject.all.should_not include(new)
+    subject.all({}).should include(new)
   end
 
   it "caches .pluck" do

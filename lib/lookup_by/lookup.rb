@@ -9,7 +9,7 @@ module LookupBy
         options.symbolize_keys!
         options.assert_valid_keys :order, :cache, :normalize, :find, :find_or_create, :raise
 
-        raise "#{self} already uses lookup_by" if is_a? LookupBy::Lookup::ClassMethods
+        raise "#{self} already called lookup_by" if is_a? LookupBy::Lookup::ClassMethods
         raise "#{self} responds_to :[], needed for lookup_by"     if respond_to? :[]
         raise "#{self} responds_to :lookup, needed for lookup_by" if respond_to? :lookup
 
@@ -35,8 +35,9 @@ module LookupBy
     end
 
     module ClassMethods
-      def all
+      def all(*args)
         return super if @lookup.read_through?
+        return super if args.any?
 
         @lookup.cache.values
       end
@@ -63,6 +64,30 @@ module LookupBy
         when self    then arg
         else raise TypeError, "#{name}[arg]: arg must be a String, Symbol, Fixnum, nil, or #{name}"
         end
+      end
+
+      def destroy_all(conditions = nil)
+        raise NotImplementedError, "#{name}.destroy_all is not supported on cached lookup tables." if @lookup.has_cache?
+
+        super
+      end
+
+      def destroy(id)
+        raise NotImplementedError, "#{name}.destroy(arg) is not supported on cached lookup tables" if @lookup.has_cache?
+
+        super
+      end
+
+      def delete_all(conditions = nil)
+        raise NotImplementedError, "#{name}.delete_all is not supported on cached lookup tables." if @lookup.has_cache?
+
+        super
+      end
+
+      def delete(id_or_array)
+        raise NotImplementedError, "#{name}.delete(arg) is not supported on cached lookup tables." if @lookup.has_cache?
+
+        super
       end
     end
 

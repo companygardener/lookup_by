@@ -41,10 +41,6 @@ describe LookupBy::Association do
     City.create(name: "New York")
   end
 
-  after do
-    City.delete_all
-  end
-
   subject { Address.new }
 
   context "Address.lookup_for :city, strict: false" do

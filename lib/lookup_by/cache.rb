@@ -51,6 +51,10 @@ module LookupBy
       end
     end
 
+    def clear
+      cache.clear if cache?
+    end
+
     def create!(*args, &block)
       created = klass.create!(*args, &block)
       cache[created.id] = created if cache?
@@ -70,6 +74,10 @@ module LookupBy
       found ||= db_write(value) if write?
 
       found
+    end
+
+    def has_cache?
+      !!type
     end
 
     def read_through?
@@ -118,16 +126,16 @@ module LookupBy
       value.is_a?(Fixnum) ? primary_key : field
     end
 
-    def cache?
-      !!type && enabled?
-    end
-
     def enabled?
       enabled
     end
 
     def cache_all?
       type == :all
+    end
+
+    def cache?
+      !!type && enabled?
     end
 
     def write?
