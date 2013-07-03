@@ -52,7 +52,7 @@ module LookupBy
     end
 
     def clear
-      cache.clear if cache?
+      cache.clear
     end
 
     def create!(*args, &block)
