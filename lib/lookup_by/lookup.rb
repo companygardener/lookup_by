@@ -20,7 +20,7 @@ module LookupBy
 
           class << self; attr_reader :lookup; end
 
-          # validates field, presence: true, uniqueness: true
+          # TODO: check for a db unique constraint or Rails validation
 
           unless field == :name || column_names.include?("name")
             alias_attribute :name, field

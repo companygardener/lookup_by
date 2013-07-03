@@ -42,7 +42,7 @@ module LookupBy
     def reload
       return unless cache_all?
 
-      cache.clear
+      clear
 
       ::ActiveRecord::Base.connection.send :log, "", "#{klass.name} Load Cache All" do
         klass.order(order).each do |i|
