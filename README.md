@@ -5,16 +5,7 @@
 
 ### Description
 
-LookupBy is a thread-safe lookup table cache for ActiveRecord. It
-reduces normalization pains.
-
-LookupBy adds two macro methods to ActiveRecord:
-
-`lookup_by :column` &mdash; defines `.[]`, `.lookup`, and `.is_a_lookup?`
-methods on the class.
-
-`lookup_for :column` &mdash; defines `column` and `column=` accessors that
-transparently reference the lookup table.
+LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
 
 ### Features
 
@@ -36,56 +27,82 @@ transparently reference the lookup table.
 
 ### Issues
 
-Please submit issues to this Github project in the [Issues
-tab][issues]. _Provide a failing rspec test that works with the
-existing test suite_.
+Please submit issues to this Github project in the [Issues tab][issues]. _Provide a failing rspec test that works with the existing test suite_.
 
-Installation
-------------
+## Installation
 
-Add this line to your application's Gemfile:
+```
+# in Gemfile
+gem "lookup_by"
 
-    gem "lookup_by"
+$ bundle
+```
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself:
+Or install it manually:
 
     $ gem install lookup_by
 
-Usage / Configuration
-=====================
+# Usage / Configuration
+
+### ActiveRecord Plugin
+
+LookupBy adds 2 macro methods to `ActiveRecord::Base`
+
+```ruby
+lookup_by :column_name
+# Defines .[], .lookup, and .is_a_lookup? class methods.
+
+lookup_for :column_name
+# Defines #column_name and #column_name= accessors that transparently reference the lookup table.
+```
 
 ### Define the lookup model
 
-    class Status < ActiveRecord::Base
-      lookup_by :column
-    end
+```ruby
+# db/migrate/201301010012_create_statuses_table.rb
+create_table :statuses do |t|
+  t.string :status, null: false
+end
 
-    # Aliases the `:column` attribute to `:name`.
-    Status.new(name: "paid")
+# app/models/status.rb
+class Status < ActiveRecord::Base
+  lookup_by :status # Replace :status with the name of your lookup column
+end
+
+# Aliases the lookup attribute to :name.
+Status.new(name: "paid")
+```
 
 ### Associations / Foreign Keys
 
-    class Order < ActiveRecord::Base
-      lookup_for :status
-    end
+```ruby
+# db/migrate/201301010123_create_orders_table.rb
+create_table :orders do |t|
+  t.belongs_to :status
+end
+
+# app/models/order.rb
+class Order < ActiveRecord::Base
+  lookup_for :status
+end
+```
 
 Creates accessors to use the `status` attribute transparently:
 
-    order = Order.new(status: "paid")
+```ruby
+order = Order.new(status: "paid")
 
-    order.status
-    => "paid"
+order.status
+=> "paid"
 
-    order.raw_status
-    => <#Status id: 1, status: "paid">
+# Access the lookup object
+order.raw_status
+=> <#Status id: 1, status: "paid">
 
-    # Access to the lookup value before type casting
-    order.status_before_type_cast
-    => "paid"
+# Access the lookup value before type casting
+order.status_before_type_cast
+=> "paid"
+```
 
 ### Symbolize
 
@@ -94,110 +111,125 @@ Casts the attribute to a symbol. Enables the setter to take a symbol.
 _This is a bad idea if the set of lookup values is large. Symbols are
 never garbage collected._
 
-    class Order < ActiveRecord::Base
-      lookup_for :status, symbolize: true
-    end
+```ruby
+class Order < ActiveRecord::Base
+  lookup_for :status, symbolize: true
+end
 
-    order = Order.new(status: "paid")
+order = Order.new(status: "paid")
 
-    order.status
-    => :paid
+order.status
+=> :paid
 
-    order.status = :shipped
-    => :shipped
+order.status = :shipped
+=> :shipped
+```
 
 ### Strict
 
-    # Raise
-    #   Default
-    lookup_for :status
+Do you want missing lookup values to raise an error?
 
-    # this will raise a LookupBy::Error
-    Order.status = "non-existent status"
+```ruby
+# Raise
+#   Default
+lookup_for :status
 
-    # Error
-    lookup_for :status, strict: false
+# this will raise a LookupBy::Error
+Order.status = "non-existent status"
+
+# Set to nil
+lookup_for :status, strict: false
+```
 
 ### Caching
 
-    # No caching - Not very useful
-    #   Default
-    lookup_by :column_name
+```ruby
+# No caching - Not very useful
+#   Default
+lookup_by :column_name
 
-    # Cache all
-    #   Use for a small finite list (e.g. status codes, US states)
-    #
-    #   find: false DEFAULT
-    lookup_by :column_name, cache: true
+# Cache all
+#   Use for a small finite list (e.g. status codes, US states)
+#
+#   find: false DEFAULT
+lookup_by :column_name, cache: true
 
-    # Cache N (with LRU eviction)
-    #   Use for a large list with uneven distribution (e.g. email domain, city)
-    #
-    #   find: true DEFAULT and REQUIRED
-    lookup_by :column_name, cache: 50
+# Cache N (with LRU eviction)
+#   Use for a large list with uneven distribution (e.g. email domain, city)
+#
+#   find: true DEFAULT and REQUIRED
+lookup_by :column_name, cache: 50
+```
 
 ### Configure cache misses
 
-    # Return nil
-    #   Default when caching all records
-    #
-    #   Skips the database for these methods:
-    #     .all, .count, .pluck
-    lookup_by :column_name, cache: true
+```ruby
+# Return nil
+#   Default when caching all records
+#
+#   Skips the database for these methods:
+#     .all, .count, .pluck
+lookup_by :column_name, cache: true
 
-    # Find (read-through)
-    #   Required when caching N records
-    lookup_by :column_name, cache: 10
-    lookup_by :column_name, cache: true, find: true
+# Find (read-through)
+#   Required when caching N records
+lookup_by :column_name, cache: 10
+lookup_by :column_name, cache: true, find: true
+```
 
 ### Configure database misses
 
-    # Return nil
-    #   Default
-    lookup_by :column_name
+```ruby
+# Return nil
+#   Default
+lookup_by :column_name
 
-    # Find or create
-    #   Useful for user-submitted fields that grow over time
-    #   e.g. user_agents, ip_addresses
-    # 
-    #   Note: Only works if its attributes are nullable
-    lookup_by :column_name, cache: 20, find_or_create: true
+# Find or create
+#   Useful for user-submitted fields that grow over time
+#   e.g. user_agents, ip_addresses
+# 
+#   Note: Only works if attributes are nullable
+lookup_by :column_name, cache: 20, find_or_create: true
+```
 
 ### Normalizing values
 
-    # Normalize
-    #   Run through the your attribute's setter
-    lookup_by :column_name, normalize: true
+```ruby
+# Normalize
+#   Run through the your attribute's setter
+lookup_by :column_name, normalize: true
+```
 
-Integration
-===========
+# Integration
 
 ### Cucumber
 
-LookupBy comes with a few cucumber steps. To use, `require` them
-from one of the ruby files under `features/support` (e.g. `env.rb`)
+```ruby
+# features/support/env.rb
+require 'lookup_by/cucumber'
+```
 
-    require 'lookup_by/cucumber'
-
-This provides `Given I reload the cache for $plural_class_name`.
+This provides: `Given I reload the cache for $plural_class_name`
 
 ### SimpleForm
 
-    = simple_form_for @order do |f|
-      = f.input :status
-      = f.input :status, :as => :radio_buttons
+```haml
+= simple_form_for @order do |f|
+  = f.input :status
+  = f.input :status, :as => :radio_buttons
+```
 
 ### Formtastic
 
-    = semantic_form_for @order do |f|
-      = f.input :status
-      = f.input :status, :as => :radio
+```haml
+= semantic_form_for @order do |f|
+  = f.input :status
+  = f.input :status, :as => :radio
+```
 
-Testing
--------
+## Testing
 
-This plugin uses rspec and pry for testing. Make sure you have them
-installed:
+This plugin uses rspec and pry for testing. Make sure you have them installed:
 
     bundle
 
@@ -205,8 +237,7 @@ To run the test suite:
 
     rake
 
-Giving Back
-===========
+# Giving Back
 
 ### Contributing
 
