@@ -1,9 +1,6 @@
 module LookupBy
   class Cache
-    attr_reader :klass, :primary_key
-    attr_reader :cache, :stats
-    attr_reader :field, :order, :type, :limit, :find, :write, :normalize
-
+    attr_reader   :cache, :field, :stats
     attr_accessor :enabled
 
     def initialize(klass, options = {})
@@ -11,7 +8,7 @@ module LookupBy
       @primary_key = klass.primary_key
       @field       = options[:field].to_sym
       @cache       = {}
-      @order       = options[:order] || field
+      @order       = options[:order] || @field
       @read        = options[:find]
       @write       = options[:find_or_create]
       @normalize   = options[:normalize]
@@ -19,12 +16,12 @@ module LookupBy
 
       @stats       = { db: Hash.new(0), cache: Hash.new(0) }
 
-      raise ArgumentError, %Q(unknown attribute "#{field}" for <#{klass}>) unless klass.column_names.include?(field.to_s)
+      raise ArgumentError, %Q(unknown attribute "#{@field}" for <#{klass}>) unless klass.column_names.include?(@field.to_s)
 
       case options[:cache]
       when true
-        @type   = :all
-        @read ||= false
+        @type    = :all
+        @read  ||= false
       when ::Fixnum
         raise ArgumentError, "`#{@klass}.lookup_by :#{@field}` options[:find] must be true when caching N" if @read == false
 
@@ -33,51 +30,51 @@ module LookupBy
         @cache   = Rails.configuration.allow_concurrency ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
         @read    = true
         @write ||= false
-        @enabled = false if Rails.env.test? && write?
+        @enabled = false if Rails.env.test? && @write
       else
         @read    = true
       end
     end
 
     def reload
-      return unless cache_all?
+      return unless @type == :all
 
       clear
 
-      ::ActiveRecord::Base.connection.send :log, "", "#{klass.name} Load Cache All" do
-        klass.order(order).each do |i|
-          cache[i.id] = i
+      ::ActiveRecord::Base.connection.send :log, "", "#{@klass.name} Load Cache All" do
+        @klass.order(@order).each do |i|
+          @cache[i.id] = i
         end
       end
     end
 
     def clear
-      cache.clear
+      @cache.clear
     end
 
     def create!(*args, &block)
-      created = klass.create!(*args, &block)
-      cache[created.id] = created if cache?
+      created = @klass.create!(*args, &block)
+      @cache[created.id] = created if cache?
       created
     end
 
     def fetch(value)
       increment :cache, :get
 
-      value = clean(value)      if normalize?
+      value = clean(value)      if @normalize && !value.is_a?(Fixnum)
 
       found = cache_read(value) if cache?
-      found ||= db_read(value)  if read_through?
+      found ||= db_read(value)  if @read
 
-      cache[found.id] = found   if found && cache?
+      @cache[found.id] = found  if found && cache?
 
-      found ||= db_write(value) if write?
+      found ||= db_write(value) if @write
 
       found
     end
 
     def has_cache?
-      !!type
+      @type
     end
 
     def read_through?
@@ -87,16 +84,14 @@ module LookupBy
   private
 
     def clean(value)
-      return value if value.is_a? Fixnum
-
-      klass.new(field => value).send(field)
+      @klass.new(@field => value).send(@field)
     end
 
     def cache_read(value)
       if value.is_a? Fixnum
-        found = cache[value]
+        found = @cache[value]
       else
-        found = cache.values.detect { |o| o.send(field) == value }
+        found = @cache.values.detect { |o| o.send(@field) == value }
       end
 
       increment :cache, found ? :hit : :miss
@@ -107,7 +102,7 @@ module LookupBy
     def db_read(value)
       increment :db, :get
 
-      found = klass.where(column_for(value) => value).first
+      found = @klass.where(column_for(value) => value).first
 
       increment :db, found ? :hit : :miss
 
@@ -118,32 +113,16 @@ module LookupBy
     def db_write(value)
       column = column_for(value)
 
-      found = klass.create!(column => value) if column != primary_key
+      found = @klass.create!(column => value) if column != @primary_key
       found
     end
 
     def column_for(value)
-      value.is_a?(Fixnum) ? primary_key : field
-    end
-
-    def enabled?
-      enabled
-    end
-
-    def cache_all?
-      type == :all
+      value.is_a?(Fixnum) ? @primary_key : @field
     end
 
     def cache?
-      !!type && enabled?
-    end
-
-    def write?
-      !!write
-    end
-
-    def normalize?
-      !!normalize
+      @type && @enabled
     end
 
     def increment(type, stat)
