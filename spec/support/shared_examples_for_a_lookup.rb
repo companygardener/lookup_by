@@ -60,8 +60,8 @@ end
 
 shared_examples "a cache" do
   it "caches records" do
-    was_enabled = subject.lookup.enabled
-    subject.lookup.enabled = true
+    was_testing = subject.lookup.testing
+    subject.lookup.testing = false
 
     original = subject.create(name: "original")
 
@@ -71,7 +71,7 @@ shared_examples "a cache" do
     subject.update(original.id, subject.lookup.field => "updated")
     subject[original.id].name.should eq "original"
 
-    subject.lookup.enabled = was_enabled
+    subject.lookup.testing = was_testing
   end
 
   it "raises on .destroy_all" do
@@ -146,8 +146,8 @@ shared_examples "a read-through cache" do
   it_behaves_like "a read-through proxy"
 
   it "caches new records" do
-    was_enabled = subject.lookup.enabled
-    subject.lookup.enabled = true
+    was_testing = subject.lookup.testing
+    subject.lookup.testing = false
 
     created = subject.create(name: "cached")
 
@@ -157,7 +157,7 @@ shared_examples "a read-through cache" do
     subject.update(created.id, name: "changed")
     subject[created.id].name.should eq "cached"
 
-    subject.lookup.enabled = was_enabled
+    subject.lookup.testing = was_testing
   end
 end
 

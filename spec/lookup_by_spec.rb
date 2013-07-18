@@ -80,8 +80,8 @@ describe LookupBy::Lookup do
     it_behaves_like "a cache"
     it_behaves_like "a read-through cache"
 
-    it "enables the LRU" do
-      subject.lookup.enabled.should be_true
+    it "is not testing when not writing through the LRU" do
+      subject.lookup.testing.should be_false
     end
   end
 
@@ -93,8 +93,8 @@ describe LookupBy::Lookup do
     it_behaves_like "a read-through cache"
     it_behaves_like "a write-through cache"
 
-    it "disables the LRU when RAILS_ENV=test" do
-      subject.lookup.enabled.should be_false
+    it "sets testing when RAILS_ENV=test" do
+      subject.lookup.testing.should be_true
     end
   end
 end

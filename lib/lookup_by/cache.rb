@@ -1,7 +1,7 @@
 module LookupBy
   class Cache
     attr_reader   :cache, :field, :stats
-    attr_accessor :enabled
+    attr_accessor :testing
 
     def initialize(klass, options = {})
       @klass       = klass
@@ -12,6 +12,7 @@ module LookupBy
       @read        = options[:find]
       @write       = options[:find_or_create]
       @normalize   = options[:normalize]
+      @testing     = false
       @enabled     = true
 
       @stats       = { db: Hash.new(0), cache: Hash.new(0) }
@@ -30,7 +31,7 @@ module LookupBy
         @cache   = Rails.configuration.allow_concurrency ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
         @read    = true
         @write ||= false
-        @enabled = false if Rails.env.test? && @write
+        @testing = true if Rails.env.test? && @write
       else
         @read    = true
       end
@@ -61,10 +62,11 @@ module LookupBy
     def fetch(value)
       increment :cache, :get
 
-      value = clean(value)      if @normalize && !value.is_a?(Fixnum)
+      value = normalize(value)      if @normalize && !value.is_a?(Fixnum)
 
       found = cache_read(value) if cache?
       found ||= db_read(value)  if @read
+      found ||= db_read(value)  if not @enabled
 
       @cache[found.id] = found  if found && cache?
 
@@ -74,16 +76,34 @@ module LookupBy
     end
 
     def has_cache?
-      @type
+      @type && @enabled
     end
 
     def read_through?
       @read
     end
 
+    def enabled?
+      @enabled
+    end
+
+    def disabled?
+      !@enabled
+    end
+
+    def enable!
+      @enabled = true
+      reload
+    end
+
+    def disable!
+      @enabled = false
+      clear
+    end
+
   private
 
-    def clean(value)
+    def normalize(value)
       @klass.new(@field => value).send(@field)
     end
 
@@ -122,7 +142,7 @@ module LookupBy
     end
 
     def cache?
-      @type && @enabled
+      @type && @enabled && !@testing
     end
 
     def increment(type, stat)

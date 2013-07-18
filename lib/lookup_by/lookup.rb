@@ -2,14 +2,26 @@ module LookupBy
   module Lookup
     module MacroMethods
       def is_a_lookup?
-        is_a? LookupBy::Lookup::ClassMethods
+        is_a? Lookup::ClassMethods
+      end
+
+      def lookup_by_disable(*methods)
+        methods.each do |method|
+          instance_eval <<-"END", __FILE__, __LINE__ + 1
+            def self.#{method}(*args)
+              raise NotImplementedError, "#{name}.#{method} is not supported on cached lookup tables." if @lookup.has_cache?
+
+              super
+            end
+          END
+        end
       end
 
       def lookup_by(field, options = {})
         options.symbolize_keys!
         options.assert_valid_keys :order, :cache, :normalize, :find, :find_or_create, :raise
 
-        raise "#{self} already called lookup_by" if is_a? LookupBy::Lookup::ClassMethods
+        raise "#{self} already called lookup_by" if is_a? Lookup::ClassMethods
         raise "#{self} responds_to :[], needed for lookup_by"     if respond_to? :[]
         raise "#{self} responds_to :lookup, needed for lookup_by" if respond_to? :lookup
 
@@ -18,7 +30,11 @@ module LookupBy
         class_eval do
           include InstanceMethods
 
-          class << self; attr_reader :lookup; end
+          singleton_class.class_eval do
+            attr_reader :lookup
+          end
+
+          lookup_by_disable :destroy, :destroy_all, :delete, :delete_all
 
           # TODO: check for a db unique constraint or Rails validation
 
@@ -64,30 +80,6 @@ module LookupBy
         when self    then arg
         else raise TypeError, "#{name}[arg]: arg must be a String, Symbol, Fixnum, nil, or #{name}"
         end
-      end
-
-      def destroy_all(conditions = nil)
-        raise NotImplementedError, "#{name}.destroy_all is not supported on cached lookup tables." if @lookup.has_cache?
-
-        super
-      end
-
-      def destroy(id)
-        raise NotImplementedError, "#{name}.destroy(arg) is not supported on cached lookup tables" if @lookup.has_cache?
-
-        super
-      end
-
-      def delete_all(conditions = nil)
-        raise NotImplementedError, "#{name}.delete_all is not supported on cached lookup tables." if @lookup.has_cache?
-
-        super
-      end
-
-      def delete(id_or_array)
-        raise NotImplementedError, "#{name}.delete(arg) is not supported on cached lookup tables." if @lookup.has_cache?
-
-        super
       end
     end
 
