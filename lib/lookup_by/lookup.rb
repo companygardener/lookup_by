@@ -71,14 +71,19 @@ module LookupBy
         @lookup.cache.values.map { |o| o.send(column_name) }
       end
 
-      def [](arg)
-        case arg
-        when nil, "" then nil
-        when String  then @lookup.fetch(arg)
-        when Symbol  then @lookup.fetch(arg.to_s)
-        when Fixnum  then @lookup.fetch(arg)
-        when self    then arg
-        else raise TypeError, "#{name}[arg]: arg must be a String, Symbol, Fixnum, nil, or #{name}"
+      def [](*args)
+        case args.size
+        when 0 then raise ArgumentError, "#{name}[*args]: at least one argument is required"
+        when 1
+          case arg = args.first
+          when nil, "" then nil
+          when String  then @lookup.fetch(arg)
+          when Symbol  then @lookup.fetch(arg.to_s)
+          when Integer then @lookup.fetch(arg)
+          when self    then arg
+          else raise TypeError, "#{name}[arg]: arg must be at least one String, Symbol, Integer, nil, or #{name}"
+          end
+        else return args.map { |arg| self[arg] } 
         end
       end
     end
@@ -86,10 +91,10 @@ module LookupBy
     module InstanceMethods
       def ===(arg)
         case arg
-        when Symbol, String, Fixnum, nil
+        when Symbol, String, Integer, nil
           return self == self.class[arg]
         when Array
-          return !!arg.detect { |i| self === i }
+          return arg.any? { |i| self === i }
         end
 
         super

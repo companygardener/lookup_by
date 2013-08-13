@@ -17,12 +17,24 @@ describe ::ActiveRecord::Base do
         public :define_method, :remove_method
       end
 
-      [:foo, :foo=, :raw_foo, :foo_before_type_cast].each do |method|
+      [:foo, :foo=, :raw_foo, :foo_before_type_cast, :foo?].each do |method|
         subject.define_method(method) { }
 
         expect { subject.lookup_for :foo }.to raise_error LookupBy::Error, /already exists/
 
         subject.remove_method(method)
+      end
+
+      class << subject.singleton_class
+        public :define_method, :remove_method
+      end
+
+      [:with_foo, :with_foos].each do |method|
+        subject.singleton_class.define_method(method) { }
+
+        expect { subject.lookup_for :foo }.to raise_error LookupBy::Error, /already exists/
+
+        subject.singleton_class.remove_method(method)
       end
     end
 
@@ -33,6 +45,18 @@ describe ::ActiveRecord::Base do
     it "rejects unsaved lookup values" do
       expect { subject.new.city = City.new(name: "Toronto") }.to raise_error ArgumentError, /must be saved/
     end
+
+    context "scope: nil" do
+      it { should respond_to(:with_city).with(1).arguments }
+      it { should respond_to(:with_cities).with(2).arguments }
+    end
+
+    context "scope: false" do
+      it { should_not respond_to(:with_postal_code) }
+      it { should_not respond_to(:with_postal_codes) }
+    end
+
+    its(:lookups) { should include(:city) }
   end
 end
 
@@ -46,7 +70,7 @@ describe LookupBy::Association do
   context "Address.lookup_for :city, strict: false" do
     it_behaves_like "a lookup for", :city
 
-    it "accepts Fixnums" do
+    it "accepts Integers" do
       subject.city = City.where(city: "New York").first.id
       subject.city.should eq "New York"
     end
@@ -92,7 +116,7 @@ describe LookupBy::Association do
 
   context "Missing.lookup_for :city" do
     it "does not raise foreign key error when table hasn't been created" do
-      expect { require "missing"; }.to_not raise_error
+      expect { require "missing" }.to_not raise_error
     end
   end
 end

@@ -3,24 +3,34 @@ shared_examples "a lookup" do
   it { should respond_to :lookup }
   it { should respond_to :lookup_by  }
   it { should respond_to :lookup_for }
+
   its(:is_a_lookup?) { should be_true }
+
+  it "raises with no args" do
+    expect { subject[] }.to raise_error ArgumentError
+  end
 
   it "returns nil for nil" do
     subject[nil].should be_nil
+    subject[nil, nil].should == [nil, nil]
   end
 
   it "returns nil for empty strings" do
     subject[""].should be_nil
+    subject["", ""].should == [nil, nil]
   end
 
   it "returns itself" do
-    first = subject.first
-    subject[first].should eq first if first
+    if first = subject.first
+      subject[first].should eq first
+      subject[first, first].should == [first, first]
+    end
   end
 
   it "rejects other argument types" do
-    [1.00, true, false, Address.new].each do |value|
-      expect { subject[value] }.to raise_error TypeError
+    [1.00, true, false, Rational(1), Address.new, Array.new, Hash.new].each do |value|
+      expect { subject[value] }.to        raise_error TypeError
+      expect { subject[value, value] }.to raise_error TypeError
     end
   end
 

@@ -23,7 +23,7 @@ module LookupBy
       when true
         @type    = :all
         @read  ||= false
-      when ::Fixnum
+      when ::Integer
         raise ArgumentError, "`#{@klass}.lookup_by :#{@field}` options[:find] must be true when caching N" if @read == false
 
         @type    = :lru
@@ -62,7 +62,7 @@ module LookupBy
     def fetch(value)
       increment :cache, :get
 
-      value = normalize(value)      if @normalize && !value.is_a?(Fixnum)
+      value = normalize(value)  if @normalize && !value.is_a?(Integer)
 
       found = cache_read(value) if cache?
       found ||= db_read(value)  if @read
@@ -108,7 +108,7 @@ module LookupBy
     end
 
     def cache_read(value)
-      if value.is_a? Fixnum
+      if value.is_a? Integer
         found = @cache[value]
       else
         found = @cache.values.detect { |o| o.send(@field) == value }
@@ -138,7 +138,7 @@ module LookupBy
     end
 
     def column_for(value)
-      value.is_a?(Fixnum) ? @primary_key : @field
+      value.is_a?(Integer) ? @primary_key : @field
     end
 
     def cache?
