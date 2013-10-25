@@ -12,3 +12,11 @@ RSpec::Core::RakeTask.new(:spec) do |config|
 end
 
 task :default => :spec
+
+namespace :db do
+  namespace :test do
+    task :load_structure => :environment do
+      Rake::Task["db:seed"].invoke
+    end
+  end
+end

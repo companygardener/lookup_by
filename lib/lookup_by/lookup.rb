@@ -19,7 +19,7 @@ module LookupBy
 
       def lookup_by(field, options = {})
         options.symbolize_keys!
-        options.assert_valid_keys :order, :cache, :normalize, :find, :find_or_create, :raise
+        options.assert_valid_keys :allow_blank, :order, :cache, :normalize, :find, :find_or_create, :raise
 
         raise "#{self} already called lookup_by" if is_a? Lookup::ClassMethods
         raise "#{self} responds_to :[], needed for lookup_by"     if respond_to? :[]
@@ -51,7 +51,9 @@ module LookupBy
     end
 
     module ClassMethods
+      # TODO: Rails 4 needs to return a proxy object here
       def all(*args)
+        return super if Rails::VERSION::MAJOR > 3
         return super if @lookup.read_through?
         return super if args.any?
 
@@ -76,10 +78,12 @@ module LookupBy
         when 0 then raise ArgumentError, "#{name}[*args]: at least one argument is required"
         when 1
           case arg = args.first
-          when nil, "" then nil
+          when nil     then nil
+          when ""      then @lookup.allow_blank? ? @lookup.fetch(arg) : nil
           when String  then @lookup.fetch(arg)
-          when Symbol  then @lookup.fetch(arg.to_s)
           when Integer then @lookup.fetch(arg)
+          when Symbol  then @lookup.fetch(arg.to_s)
+          when IPAddr  then @lookup.fetch(arg.to_s)
           when self    then arg
           else raise TypeError, "#{name}[arg]: arg must be at least one String, Symbol, Integer, nil, or #{name}"
           end
@@ -91,7 +95,7 @@ module LookupBy
     module InstanceMethods
       def ===(arg)
         case arg
-        when Symbol, String, Integer, nil
+        when Symbol, String, Integer, IPAddr, nil
           return self == self.class[arg]
         when Array
           return arg.any? { |i| self === i }
@@ -102,22 +106,40 @@ module LookupBy
     end
 
     module SchemaMethods
-      def create_lookup_table(table_name, options = {})
-        lookup_column = options[:lookup_column] || table_name.to_s.singularize
-        primary_key   = options[:primary_key]   || table_name.to_s.singularize + "_id"
+      def create_lookup_table(name, options = {})
+        options.symbolize_keys!
 
-        create_table table_name, primary_key: primary_key do |t|
-          t.text lookup_column, null: false
+        schema = options[:schema].to_s
+
+        if schema.present?
+          table = name.to_s
+        else
+          schema, table = name.to_s.split('.')
+          schema, table = nil, schema unless table
+        end
+
+        name = schema.blank? ? table : "#{schema}.#{table}"
+
+        lookup_column = options[:lookup_column] || table.singularize
+        lookup_type   = options[:lookup_type]   || :text
+
+        table_options = options.slice(:primary_key, :id)
+        table_options[:primary_key] ||= table.singularize + '_id'
+
+        create_table name, table_options do |t|
+          t.send lookup_type, lookup_column, null: false
 
           yield t if block_given?
         end
 
-        add_index table_name, lookup_column, unique: true
+        add_index name, lookup_column, unique: true, name: "#{table}__u_#{lookup_column}"
       end
 
-      def create_lookup_tables(*table_names)
-        table_names.each do |table_name|
-          create_lookup_table table_name
+      def create_lookup_tables(*names)
+        options = names.last.is_a?(Hash) ? names.pop : {}
+
+        names.each do |name|
+          create_lookup_table name, options
         end
       end
     end

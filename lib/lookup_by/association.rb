@@ -84,9 +84,9 @@ module LookupBy
 
           def #{field}=(arg)
             value = case arg
-            when "", nil
+            when nil
               nil
-            when String, Integer
+            when String, Integer, IPAddr
               #{class_name}[arg].try(:id)
             when Symbol
               #{%Q(raise ArgumentError, "#{foreign_key}=(Symbol): use `lookup_for :column, symbolize: true` to allow symbols") unless options[:symbolize]}
@@ -95,7 +95,7 @@ module LookupBy
               raise ArgumentError, "self.#{foreign_key}=(#{class_name}): must be saved" unless arg.id
               arg.id
             else
-              raise TypeError, "#{foreign_key}=(arg): arg must be a String, Symbol, Integer, nil, or #{class_name}"
+              raise TypeError, "#{foreign_key}=(arg): arg must be a String, Symbol, Integer, IPAddr, nil, or #{class_name}"
             end
 
             #{%Q(raise LookupBy::Error, "\#{arg.inspect} is not in the <#{class_name}> lookup cache" if arg.present? && value.nil?) if strict}

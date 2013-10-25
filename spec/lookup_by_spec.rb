@@ -85,8 +85,8 @@ describe LookupBy::Lookup do
     end
   end
 
-  context "IpAddress.lookup_by :column, cache: N, find_or_create: true" do
-    subject { IpAddress }
+  context "UserAgent.lookup_by :column, cache: N, find_or_create: true" do
+    subject { UserAgent }
 
     it_behaves_like "a lookup"
     it_behaves_like "a cache"
@@ -95,6 +95,33 @@ describe LookupBy::Lookup do
 
     it "sets testing when RAILS_ENV=test" do
       subject.lookup.testing.should be_true
+    end
+  end
+
+  context "IpAddress.lookup_by :column, cache: N, find_or_create: true" do
+    subject { IpAddress }
+
+    it "allows lookup by IPAddr" do
+      ip = subject['127.0.0.1']
+
+      subject[IPAddr.new('127.0.0.1')].should == ip
+      subject[ip.id].should == ip
+      subject['127.0.0.1'].should == ip
+    end
+  end
+
+  context "Path.lookup_by :column, cache: true, find_or_create: true (UUID primary key)" do
+    subject { Path }
+
+    it_behaves_like "a lookup"
+    it_behaves_like "a cache"
+    it_behaves_like "a read-through cache"
+    it_behaves_like "a write-through cache"
+
+    it 'treats UUIDs as the primary key' do
+      path = subject['/']
+      path.id.should match(LookupBy::UUID_REGEX)
+      subject[path.id].should == path
     end
   end
 end

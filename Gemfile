@@ -10,6 +10,7 @@ group :development, :test do
   gem "rake"
   gem "simplecov", require: false
   gem "rspec-rails", "~> 2.11.0"
+  gem 'database_cleaner'
 
   gem "pg", platform: :ruby
   gem "activerecord-jdbcpostgresql-adapter", platform: :jruby

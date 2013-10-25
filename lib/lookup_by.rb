@@ -4,6 +4,9 @@ require "lookup_by/railtie" if defined? Rails
 module LookupBy
   class Error < StandardError; end
 
+  UUID_REGEX    = /\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\Z/
+  UUID_REGEX_V4 = /\A\h{8}-\h{4}-4\h{3}-[89aAbB]\h{3}-\h{12}\Z/
+
   autoload :Association, "lookup_by/association"
   autoload :Cache,       "lookup_by/cache"
   autoload :Lookup,      "lookup_by/lookup"

@@ -4,18 +4,20 @@ module LookupBy
     attr_accessor :testing
 
     def initialize(klass, options = {})
-      @klass       = klass
-      @primary_key = klass.primary_key
-      @field       = options[:field].to_sym
-      @cache       = {}
-      @order       = options[:order] || @field
-      @read        = options[:find]
-      @write       = options[:find_or_create]
-      @normalize   = options[:normalize]
-      @testing     = false
-      @enabled     = true
+      @klass            = klass
+      @primary_key      = klass.primary_key
+      @primary_key_type = klass.columns_hash[@primary_key].type
+      @field            = options[:field].to_sym
+      @cache            = {}
+      @order            = options[:order] || @field
+      @read             = options[:find_or_create] || options[:find]
+      @write            = options[:find_or_create]
+      @allow_blank      = options[:allow_blank] || false
+      @normalize        = options[:normalize]
+      @testing          = false
+      @enabled          = true
 
-      @stats       = { db: Hash.new(0), cache: Hash.new(0) }
+      @stats            = { db: Hash.new(0), cache: Hash.new(0) }
 
       raise ArgumentError, %Q(unknown attribute "#{@field}" for <#{klass}>) unless klass.column_names.include?(@field.to_s)
 
@@ -62,7 +64,7 @@ module LookupBy
     def fetch(value)
       increment :cache, :get
 
-      value = normalize(value)  if @normalize && !value.is_a?(Integer)
+      value = normalize(value)  if @normalize && !primary_key?(value)
 
       found = cache_read(value) if cache?
       found ||= db_read(value)  if @read
@@ -81,6 +83,10 @@ module LookupBy
 
     def read_through?
       @read
+    end
+
+    def allow_blank?
+      @allow_blank
     end
 
     def enabled?
@@ -103,12 +109,21 @@ module LookupBy
 
   private
 
+    def primary_key?(value)
+      case @primary_key_type
+      when :integer
+        value.is_a? Integer
+      when :uuid
+        value =~ UUID_REGEX
+      end
+    end
+
     def normalize(value)
       @klass.new(@field => value).send(@field)
     end
 
     def cache_read(value)
-      if value.is_a? Integer
+      if primary_key?(value)
         found = @cache[value]
       else
         found = @cache.values.detect { |o| o.send(@field) == value }
@@ -138,7 +153,7 @@ module LookupBy
     end
 
     def column_for(value)
-      value.is_a?(Integer) ? @primary_key : @field
+      primary_key?(value) ? @primary_key : @field
     end
 
     def cache?
