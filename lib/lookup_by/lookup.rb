@@ -18,6 +18,13 @@ module LookupBy
       end
 
       def lookup_by(field, options = {})
+        begin
+          connection
+        rescue => error
+          Rails.logger.error "lookup_by caught #{error.class.name} when connecting - skipping initialization (#{error.inspect})"
+          return
+        end
+
         options.symbolize_keys!
         options.assert_valid_keys :allow_blank, :order, :cache, :normalize, :find, :find_or_create, :raise
 
