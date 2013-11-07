@@ -146,10 +146,10 @@ module LookupBy
 
     # TODO: Handle race condition on create! failure
     def db_write(value)
-      column = column_for(value)
-
-      found = @klass.create!(column => value) if column != @primary_key
-      found
+      @klass.create! do |found|
+        found[@field]       = value
+        found[@primary_key] = value if primary_key? value
+      end
     end
 
     def column_for(value)
