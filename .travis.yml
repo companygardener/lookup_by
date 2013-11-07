@@ -7,4 +7,4 @@ rvm:
 services:
   - postgresql
 before_script:
-  - sh -c "cd spec/dummy && RAILS_ENV=test bundle exec rake db:migrate:reset"
+  - sh -c "cd spec/dummy && RAILS_ENV=test bundle exec rake db:migrate:reset db:seed"

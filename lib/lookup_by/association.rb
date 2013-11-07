@@ -14,7 +14,12 @@ module LookupBy
   module Association
     module MacroMethods
       def lookup_for field, options = {}
-        return unless table_exists?
+        begin
+          return unless table_exists?
+        rescue => error
+          Rails.logger.error "lookup_by caught #{error.class.name} when connecting - skipping initialization (#{error.inspect})"
+          return
+        end
 
         options.symbolize_keys!
         options.assert_valid_keys(:class_name, :foreign_key, :symbolize, :strict, :scope)
