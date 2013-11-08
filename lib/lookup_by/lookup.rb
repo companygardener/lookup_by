@@ -19,7 +19,7 @@ module LookupBy
 
       def lookup_by(field, options = {})
         begin
-          connection
+          return unless table_exists?
         rescue => error
           Rails.logger.error "lookup_by caught #{error.class.name} when connecting - skipping initialization (#{error.inspect})"
           return
