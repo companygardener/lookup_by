@@ -21,12 +21,6 @@ group :development, :test do
     gem 'rubinius-coverage'
 
     gem 'rubysl'
-    gem 'rubysl-logger'
-    gem 'rubysl-singleton'
-    gem 'rubysl-mutex_m'
-    gem 'rubysl-bigdecimal'
-    gem 'rubysl-base64'
-
-    gem 'rubysl-test-unit'
+    gem 'rubysl-test-unit', require: false
   end
 end
