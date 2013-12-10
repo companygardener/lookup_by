@@ -11,5 +11,5 @@ services:
 before_script:
   - psql -c 'create database lookup_by_test' -U postgres
 script:
-  - bundle exec rake app:db:test:prepare --trace
+  - bundle exec rake app:db:test:prepare
   - bundle exec rake
