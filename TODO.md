@@ -9,8 +9,6 @@ Roadmap
 
 Soon
 ====
-* Travis CI
-* Gemnasium
 * Require validations / constraints on lookup field (presence, uniqueness)
 * Trap signal to output stats
 * Populate LRU with counts grouped by an association
