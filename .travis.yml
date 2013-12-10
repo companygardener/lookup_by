@@ -1,11 +1,17 @@
 language: ruby
 rvm:
   - 1.9.3
-  - 2.0.0-p0
+  - 2.0.0
+  - 2.1.0-preview1
   - ruby-head
   - rbx
   - rbx-2.2.1
 services:
   - postgresql
+env:
+  - RAILS_ENV=test
 before_script:
-  - sh -c "cd spec/dummy && RAILS_ENV=test bundle exec rake db:migrate:reset db:seed"
+  - psql -c 'create database lookup_by_test' -U postgres
+script:
+  - bundle exec rake db:test:prepare
+  - bundle exec rake
