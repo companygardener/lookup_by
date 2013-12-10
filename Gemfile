@@ -10,9 +10,23 @@ group :development, :test do
   gem "rake"
   gem "simplecov", require: false
   gem 'coveralls', require: false
-  gem "rspec-rails", "~> 2.11.0"
+  gem "rspec-rails"
   gem 'database_cleaner'
 
   gem "pg", platform: :ruby
   gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
+
+  platform :rbx do
+    gem 'racc'
+    gem 'rubinius-coverage'
+
+    gem 'rubysl'
+    gem 'rubysl-logger'
+    gem 'rubysl-singleton'
+    gem 'rubysl-mutex_m'
+    gem 'rubysl-bigdecimal'
+    gem 'rubysl-base64'
+
+    gem 'rubysl-test-unit'
+  end
 end

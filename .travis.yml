@@ -2,8 +2,9 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0-p0
-  - rbx-19mode
   - ruby-head
+  - rbx
+  - rbx-2.2.1
 services:
   - postgresql
 before_script:

@@ -1,1 +1,1 @@
-rvm use 2.0.0-p0@lookup_by --create
+rvm use ruby-2.0.0-p353@lookup_by --create

@@ -13,4 +13,4 @@ Soon
 * Gemnasium
 * Require validations / constraints on lookup field (presence, uniqueness)
 * Trap signal to output stats
-* Populate LRU with using the counts of an association
+* Populate LRU with counts grouped by an association

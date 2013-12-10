@@ -1,8 +1,7 @@
 # LookupBy
 
 [![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png)](http://travis-ci.org/companygardener/lookup_by)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/companygardener/lookup_by)
-
+[![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)](https://codeclimate.com/github/companygardener/lookup_by)
 ### Description
 
 LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
