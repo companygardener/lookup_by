@@ -1,7 +1,19 @@
 # LookupBy
 
-[![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png)](http://travis-ci.org/companygardener/lookup_by)
-[![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)](https://codeclimate.com/github/companygardener/lookup_by)
+[![Gem Version](https://badge.fury.io/rb/lookup_by.png)][rubygems]
+[![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png?branch=master)][travis]
+[![Dependency Status](https://gemnasium.com/companygardener/lookup_by.png)][gemnasium]
+[![Coverage Status](https://coveralls.io/repos/companygardener/lookup_by/badge.png?branch=master)][coveralls]
+[![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)][codeclimate]
+[![Gittip](http://img.shields.io/gittip/companygardener.png)][gittip]
+
+[rubygems]:    https://rubygems.org/gems/lookup_by
+[travis]:      http://travis-ci.org/companygardener/lookup_by
+[gemnasium]:   https://gemnasium.com/companygardener/lookup_by
+[coveralls]:   https://coveralls.io/r/companygardener/lookup_by?branch=master
+[codeclimate]: https://codeclimate.com/github/companygardener/lookup_by
+[gittip]:      https://www.gittip.com/companygardener
+
 ### Description
 
 LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
@@ -186,7 +198,7 @@ lookup_by :column_name
 # Find or create
 #   Useful for user-submitted fields that grow over time
 #   e.g. user_agents, ip_addresses
-# 
+#
 #   Note: Only works if attributes are nullable
 lookup_by :column_name, cache: 20, find_or_create: true
 ```
@@ -234,6 +246,7 @@ This plugin uses rspec and pry for testing. Make sure you have them installed:
 
 To run the test suite:
 
+    rake app:db:test:prepare
     rake
 
 # Giving Back
@@ -254,7 +267,7 @@ Copyright © 2012 Erik Peterson, Enova
 
 Released under the MIT License. See [MIT-LICENSE][license] file for more details.
 
-[development]: http://www.github.com/companygardener/lookup_by "LookupBy Development"
-[issues]: http://www.github.com/companygardener/lookup_by/issues "LookupBy Issues"
-[license]: http://www.github.com/companygardener/lookup_by/blob/master/MIT-LICENSE "LookupBy License"
+[development]:  http://github.com/companygardener/lookup_by "LookupBy Development"
+[issues]:       http://github.com/companygardener/lookup_by/issues "LookupBy Issues"
+[license]:      http://github.com/companygardener/lookup_by/blob/master/MIT-LICENSE "LookupBy License"
 [contributors]: http://github.com/companygardener/lookup_by/graphs/contributors "LookupBy Contributors"
