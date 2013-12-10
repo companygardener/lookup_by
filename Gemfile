@@ -9,6 +9,7 @@ group :development, :test do
   gem "pry"
   gem "rake"
   gem "simplecov", require: false
+  gem 'coveralls', require: false
   gem "rspec-rails", "~> 2.11.0"
   gem 'database_cleaner'
 

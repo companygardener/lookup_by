@@ -1,7 +1,8 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 
-GC.disable if defined?(GC) && GC.respond_to?(:disable)
+require 'coveralls'
+Coveralls.wear!
 
 if ENV["COV"]
   require "simplecov"
