@@ -10,6 +10,7 @@ module LookupBy
   autoload :Association, "lookup_by/association"
   autoload :Cache,       "lookup_by/cache"
   autoload :Lookup,      "lookup_by/lookup"
+  autoload :IPAddr,      "ipaddr"
 
   module Caching
     autoload :LRU,       "lookup_by/caching/lru"
