@@ -1,6 +1,5 @@
 require "spec_helper"
 require "lookup_by"
-require "pry"
 
 describe ::ActiveRecord::Base do
   describe "macro methods" do
