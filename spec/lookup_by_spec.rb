@@ -1,5 +1,6 @@
 require "spec_helper"
 require "lookup_by"
+require "pry"
 
 describe ::ActiveRecord::Base do
   describe "macro methods" do
@@ -94,6 +95,31 @@ describe LookupBy::Lookup do
 
     it "sets testing when RAILS_ENV=test" do
       subject.lookup.testing.should be_true
+    end
+
+    it "does not write primary keys" do
+      expect { UserAgent[1] }.to_not raise_error
+    end
+
+    # Has begin..ensure to prevent monkey patch from leaking.
+    it "handles the race condition on write-throughs" do
+      begin
+        class ::LookupBy::Cache
+          alias fetch_old fetch
+
+          def fetch(value)
+            db_write(value)
+            db_write(value)
+          end
+        end
+
+        expect { UserAgent.transaction { UserAgent["Mozilla"].destroy } }.to_not raise_error
+      ensure
+        class ::LookupBy::Cache
+          alias fetch fetch_old
+          undef fetch_old
+        end
+      end
     end
   end
 

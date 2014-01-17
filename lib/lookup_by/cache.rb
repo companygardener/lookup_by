@@ -67,13 +67,11 @@ module LookupBy
       value = normalize(value)  if @normalize && !primary_key?(value)
 
       found = cache_read(value) if cache?
-      found ||= db_read(value)  if @read
-      found ||= db_read(value)  if not @enabled
+      found ||= db_read(value)  if @read || !@enabled
 
       @cache[found.id] = found  if found && cache?
 
       found ||= db_write(value) if @write
-
       found
     end
 
@@ -144,12 +142,16 @@ module LookupBy
       found
     end
 
-    # TODO: Handle race condition on create! failure
     def db_write(value)
       column = column_for(value)
 
-      found = @klass.create!(column => value) if column != @primary_key
-      found
+      return if column == @primary_key
+
+      @klass.transaction(requires_new: true) do
+        @klass.create!(column => value)
+      end
+    rescue ActiveRecord::RecordNotUnique
+      db_read(value)
     end
 
     def column_for(value)
