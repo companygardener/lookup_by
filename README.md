@@ -16,55 +16,62 @@
 
 ### Description
 
-LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
+LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains which features:
 
-### Features
+* a configurable lookup column
+* caching (read-through, write-through, Least Recently Used (LRU))
 
-* Thread-safety
-* Configurable lookup column
-* Caching (read-through, write-through, Least Recently Used (LRU))
+### Dependencies
 
-### Compatibility
-
+* Rails 3.2+
 * PostgreSQL
 
 ### Development
 
-* [github.com/companygardener/lookup_by][development]
+[github.com/companygardener/lookup_by][development]
 
 ### Source
 
-* git clone git://github.com/companygardener/lookup_by.git
+git clone git://github.com/companygardener/lookup_by.git
 
-### Issues
+### Bug reports
 
-Please submit issues to this Github project in the [Issues tab][issues]. _Provide a failing rspec test that works with the existing test suite_.
+If you discover a problem with LookupBy, please let me know. However, I ask that you'd kindly review these guidelines before creating [Issues][]:
+
+https://github.com/companygardener/lookup_by/wiki/Bug-Reports
+
+If you find a security bug, please **_do not_** use the issue tracker. Instead, send an email to: thecompanygardener@gmail.com.
+
+Please create [Issues][issues] to submit bug reports and feature requests.
+
+_Provide a failing rspec test concisely demonstrates the issue._
+
+### Feature requests
 
 ## Installation
 
-```
-# in Gemfile
-gem "lookup_by"
+    # in Gemfile
+    gem "lookup_by"
 
-$ bundle
-```
+    $ bundle
 
 Or install it manually:
 
     $ gem install lookup_by
 
-# Usage / Configuration
+## Usage / Configuration
 
 ### ActiveRecord Plugin
 
-LookupBy adds 2 macro methods to `ActiveRecord::Base`
+LookupBy adds two "macro" methods to `ActiveRecord::Base`
 
 ```ruby
 lookup_by :column_name
 # Defines .[], .lookup, and .is_a_lookup? class methods.
 
-lookup_for :column_name
-# Defines #column_name and #column_name= accessors that transparently reference the lookup table.
+lookup_for :status
+# Defines #status and #status= instance methods that transparently reference the lookup table.
+# Defines .with_status(name) and .with_statuses(*names) scopes on the model.
 ```
 
 ### Define the lookup model
@@ -75,12 +82,15 @@ create_table :statuses do |t|
   t.string :status, null: false
 end
 
+# Or use the shorthand
+create_lookup_table :statuses
+
 # app/models/status.rb
 class Status < ActiveRecord::Base
-  lookup_by :status # Replace :status with the name of your lookup column
+  lookup_by :status
 end
 
-# Aliases the lookup attribute to :name.
+# Aliases :name to the lookup attribute
 Status.new(name: "paid")
 ```
 
@@ -98,7 +108,7 @@ class Order < ActiveRecord::Base
 end
 ```
 
-Creates accessors to use the `status` attribute transparently:
+Provides accessors to use the `status` attribute transparently:
 
 ```ruby
 order = Order.new(status: "paid")
@@ -106,21 +116,27 @@ order = Order.new(status: "paid")
 order.status
 => "paid"
 
+order.status_id
+=> 1
+
 # Access the lookup object
 order.raw_status
-=> <#Status id: 1, status: "paid">
+=> #<Status id: 1, status: "paid">
 
 # Access the lookup value before type casting
 order.status_before_type_cast
 => "paid"
+
+# Look ma', no strings!
+Order.column_names
+=> ["order_id", "status_id"]
 ```
 
 ### Symbolize
 
 Casts the attribute to a symbol. Enables the setter to take a symbol.
 
-_This is a bad idea if the set of lookup values is large. Symbols are
-never garbage collected._
+_Bad idea when the set of lookup values is large. Symbols are never garbage collected._
 
 ```ruby
 class Order < ActiveRecord::Base
@@ -138,7 +154,7 @@ order.status = :shipped
 
 ### Strict
 
-Do you want missing lookup values to raise an error?
+By default, missing lookup values will raise an error.
 
 ```ruby
 # Raise
@@ -148,11 +164,15 @@ lookup_for :status
 # this will raise a LookupBy::Error
 Order.status = "non-existent status"
 
-# Set to nil
+# Set to nil instead
 lookup_for :status, strict: false
 ```
 
 ### Caching
+
+The default is no caching. You can also cache all records or use an LRU.
+
+_Note: caching is __per process__, make sure you think through the implications._
 
 ```ruby
 # No caching - Not very useful
@@ -162,13 +182,15 @@ lookup_by :column_name
 # Cache all
 #   Use for a small finite list (e.g. status codes, US states)
 #
-#   find: false DEFAULT
+#   Defaults to no read-through
+#     options[:find] = false
 lookup_by :column_name, cache: true
 
 # Cache N (with LRU eviction)
-#   Use for a large list with uneven distribution (e.g. email domain, city)
+#   Use for large sets with uneven distribution (e.g. email domain, city)
 #
-#   find: true DEFAULT and REQUIRED
+#   Requires read-through
+#     options[:find] = true
 lookup_by :column_name, cache: 50
 ```
 
@@ -203,12 +225,22 @@ lookup_by :column_name
 lookup_by :column_name, cache: 20, find_or_create: true
 ```
 
-### Normalizing values
+### Normalize values
 
 ```ruby
 # Normalize
 #   Run through the your attribute's setter
 lookup_by :column_name, normalize: true
+```
+
+### Allow blank
+
+Can be useful to handle `params` that are not required.
+
+```ruby
+# Allow blank
+#   Treat "" different than nil
+lookup_by :column_name, allow_blank: true
 ```
 
 # Integration
@@ -261,9 +293,9 @@ To run the test suite:
 
 ### Attribution
 
-A list of authors can be found on the [LookupBy Contributors page][contributors].
+A list of authors can be found on the [Contributors][] page.
 
-Copyright © 2012 Erik Peterson, Enova
+Copyright © 2014 Erik Peterson
 
 Released under the MIT License. See [MIT-LICENSE][license] file for more details.
 
