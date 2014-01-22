@@ -44,7 +44,7 @@ If you find a security bug, please **_do not_** use the issue tracker. Instead, 
 
 Please create [Issues][issues] to submit bug reports and feature requests.
 
-_Provide a failing rspec test concisely demonstrates the issue._
+_Provide a failing rspec test that concisely demonstrates the issue._
 
 ### Feature requests
 
