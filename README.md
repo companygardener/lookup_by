@@ -46,8 +46,6 @@ Please create [Issues][issues] to submit bug reports and feature requests.
 
 _Provide a failing rspec test that concisely demonstrates the issue._
 
-### Feature requests
-
 ## Installation
 
     # in Gemfile
