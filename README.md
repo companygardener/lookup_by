@@ -172,7 +172,7 @@ lookup_for :status, strict: false
 
 The default is no caching. You can also cache all records or use an LRU.
 
-_Note: caching is __per process__, make sure you think through the implications._
+_Note: caching is **per process**, make sure you think through the implications._
 
 ```ruby
 # No caching - Not very useful
@@ -196,6 +196,8 @@ lookup_by :column_name, cache: 50
 
 ### Configure cache misses
 
+You can enable read-throughs using the `:find` option.
+
 ```ruby
 # Return nil
 #   Default when caching all records
@@ -212,6 +214,10 @@ lookup_by :column_name, cache: true, find: true
 
 ### Configure database misses
 
+You can enable write-throughs using the `:find_or_create` option.
+
+_Note: This will only work if the primary key is a sequence and all columns but the lookup column are optional._
+
 ```ruby
 # Return nil
 #   Default
@@ -220,8 +226,6 @@ lookup_by :column_name
 # Find or create
 #   Useful for user-submitted fields that grow over time
 #   e.g. user_agents, ip_addresses
-#
-#   Note: Only works if attributes are nullable
 lookup_by :column_name, cache: 20, find_or_create: true
 ```
 
