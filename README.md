@@ -14,12 +14,13 @@
 [codeclimate]: https://codeclimate.com/github/companygardener/lookup_by
 [gittip]:      https://www.gittip.com/companygardener
 
-### Description
+# Overview
 
-LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains which features:
+LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains and supports:
 
-* a configurable lookup column
-* caching (read-through, write-through, Least Recently Used (LRU))
+* configurable column names
+* caching (read-through, write-through, least recently used (LRU))
+* symbols
 
 ### Dependencies
 
@@ -46,10 +47,13 @@ Please create [Issues][issues] to submit bug reports and feature requests.
 
 _Provide a failing rspec test that concisely demonstrates the issue._
 
-## Installation
+# Installation
 
-    # in Gemfile
+Add this line to your application's Gemfile:
+
     gem "lookup_by"
+
+And then execute:
 
     $ bundle
 
@@ -57,7 +61,8 @@ Or install it manually:
 
     $ gem install lookup_by
 
-## Usage / Configuration
+
+# Usage
 
 ### ActiveRecord Plugin
 
@@ -76,8 +81,8 @@ lookup_for :status
 
 ```ruby
 # db/migrate/201301010012_create_statuses_table.rb
-create_table :statuses do |t|
-  t.string :status, null: false
+create_table :statuses, primary_key: :status_id do |t|
+  t.text :status, null: false
 end
 
 # Or use the shorthand
@@ -92,7 +97,7 @@ end
 Status.new(name: "paid")
 ```
 
-### Associations / Foreign Keys
+### Define an association
 
 ```ruby
 # db/migrate/201301010123_create_orders_table.rb
@@ -106,7 +111,7 @@ class Order < ActiveRecord::Base
 end
 ```
 
-Provides accessors to use the `status` attribute transparently:
+LookupBy creates methods that use the `status` attribute transparently:
 
 ```ruby
 order = Order.new(status: "paid")
@@ -129,6 +134,8 @@ order.status_before_type_cast
 Order.column_names
 => ["order_id", "status_id"]
 ```
+
+# Configuration
 
 ### Symbolize
 
@@ -192,7 +199,7 @@ lookup_by :column_name, cache: true
 lookup_by :column_name, cache: 50
 ```
 
-### Configure cache misses
+### Cache miss
 
 You can enable read-throughs using the `:find` option.
 
@@ -210,7 +217,7 @@ lookup_by :column_name, cache: 10
 lookup_by :column_name, cache: true, find: true
 ```
 
-### Configure database misses
+### DB miss
 
 You can enable write-throughs using the `:find_or_create` option.
 
@@ -283,23 +290,34 @@ To run the test suite:
     rake app:db:test:prepare
     rake
 
-# Giving Back
+# Contribute
 
-### Contributing
-
-1. Fork
-2. Create a feature branch `git checkout -b new-hotness`
-3. Commit your changes `git commit -am 'Added some feature'`
-4. Push to the branch `git push origin new-hotness`
-5. Create a Pull Request
-
-### Attribution
+  1. Fork
+  2. Create a feature branch `git checkout -b new-hotness`
+  3. Commit your changes `git commit -am 'Added some feature'`
+  4. Push to the branch `git push origin new-hotness`
+  5. Create a Pull Request
 
 A list of authors can be found on the [Contributors][] page.
 
+# License
+
 Copyright © 2014 Erik Peterson
 
-Released under the MIT License. See [MIT-LICENSE][license] file for more details.
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [development]:  http://github.com/companygardener/lookup_by "LookupBy Development"
 [issues]:       http://github.com/companygardener/lookup_by/issues "LookupBy Issues"
