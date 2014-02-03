@@ -5,7 +5,7 @@ rvm:
   - 2.1.0-preview1
   - ruby-head
   - rbx
-  - rbx-2.2.1
+  - rbx-2.2.2
 services:
   - postgresql
 before_script:
