@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.description    = %q(Use database lookup tables in AR models.)
 
   gem.authors        = ["Erik Peterson"]
-  gem.email          = ["erik@enova.com"]
+  gem.email          = ["thecompanygardener@gmail.com"]
 
   gem.homepage       = "https://www.github.com/companygardener/lookup_by"
   gem.license        = "MIT"
