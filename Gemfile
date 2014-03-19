@@ -18,25 +18,6 @@ group :development, :test do
   gem "pry",       require: false
   gem 'colored',   require: false
 
-  platform :rbx do
-    gem 'racc'
-    gem 'json'
-
-    # Simplecov and Coveralls
-    gem 'rubysl-coverage'
-    gem 'rubinius-coverage'
-
-    # Pry
-    gem 'rubysl-readline'
-
-    # Rails
-    gem 'rubysl-base64'
-    gem 'rubysl-benchmark'
-    gem 'rubysl-bigdecimal'
-    gem 'rubysl-digest'
-    gem 'rubysl-ipaddr'
-    gem 'rubysl-logger'
-    gem 'rubysl-mutex_m'
-    gem 'rubysl-singleton'
-  end
+  gem 'racc'
+  gem 'json'
 end
