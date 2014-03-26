@@ -2,10 +2,10 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
-  - 2.1.0-preview1
+  - 2.1.1
   - ruby-head
   - rbx
-  - rbx-2.2.2
+  - rbx-2.2.6
 services:
   - postgresql
 before_script:
