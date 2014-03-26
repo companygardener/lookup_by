@@ -42,6 +42,10 @@ describe LookupBy::Lookup do
 
       subject["  paid "].id.should == status.id
     end
+
+    it "has a small primary key" do
+      expect { Status.create(status_id: 100_000, status: "too_big") }.to raise_error
+    end
   end
 
   context "EmailAddress.lookup_by :column, find_or_create: true" do

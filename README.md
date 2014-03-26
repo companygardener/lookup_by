@@ -88,6 +88,16 @@ end
 # Or use the shorthand
 create_lookup_table :statuses
 
+# UUID primary key
+#   options[:id]    = :uuid
+#
+# SMALLSERIAL primary key
+#   options[:small] = true
+#
+# Change the lookup column
+#   options[:lookup_column] = "phone_number"
+#   options[:lookup_type]   = :phone
+
 # app/models/status.rb
 class Status < ActiveRecord::Base
   lookup_by :status

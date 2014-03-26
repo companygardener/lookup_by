@@ -6,7 +6,7 @@ class CreateTables < ActiveRecord::Migration
     create_lookup_table :email_addresses
 
     create_lookup_table :accounts
-    create_lookup_table :statuses
+    create_lookup_table :statuses, small: true
 
     create_lookup_table :ip_addresses, lookup_type: :inet
 

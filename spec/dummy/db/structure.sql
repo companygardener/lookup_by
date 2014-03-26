@@ -270,7 +270,7 @@ ALTER SEQUENCE states_state_id_seq OWNED BY states.state_id;
 --
 
 CREATE TABLE statuses (
-    status_id integer NOT NULL,
+    status_id smallint NOT NULL,
     status text NOT NULL
 );
 

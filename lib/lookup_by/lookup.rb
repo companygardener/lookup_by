@@ -133,8 +133,12 @@ module LookupBy
         table_options = options.slice(:primary_key, :id)
         table_options[:primary_key] ||= table.singularize + '_id'
 
+        table_options[:id] = false if options[:small]
+
         create_table name, table_options do |t|
-          t.send lookup_type, lookup_column, null: false
+          t.column table_options[:primary_key], 'smallserial primary key' if options[:small]
+
+          t.column lookup_column, lookup_type, null: false
 
           yield t if block_given?
         end
