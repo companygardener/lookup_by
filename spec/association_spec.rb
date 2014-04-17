@@ -45,6 +45,10 @@ describe ::ActiveRecord::Base do
       expect { subject.new.city = City.new(name: "Toronto") }.to raise_error ArgumentError, /must be saved/
     end
 
+    it "requires the lookup model to be using lookup_by" do
+      expect { subject.lookup_for :country }.to raise_error LookupBy::Error, /Country does not use lookup_by/
+    end
+
     context "scope: nil" do
       it { should respond_to(:with_city).with(1).arguments }
       it { should respond_to(:with_cities).with(2).arguments }
