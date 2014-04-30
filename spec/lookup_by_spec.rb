@@ -15,9 +15,20 @@ describe ::ActiveRecord::Base do
 
     it { should respond_to :name }
   end
+
 end
 
 describe LookupBy::Lookup do
+  describe "cache" do
+    it "seeds values" do
+      City.lookup.seed 'Boston'
+      City.lookup.seed 'Chicago', 'New York City'
+
+      City.all.map(&:name).sort.should eq(['Boston', 'Chicago', 'New York City'])
+      City.lookup.clear
+    end
+  end
+
   context "City.lookup_by :column" do
     subject { City }
 

@@ -55,10 +55,22 @@ module LookupBy
       @cache.clear
     end
 
+    def create(*args, &block)
+      created = @klass.create(*args, &block)
+      @cache[created.id] = created if created && cache?
+      created
+    end
+
     def create!(*args, &block)
       created = @klass.create!(*args, &block)
       @cache[created.id] = created if cache?
       created
+    end
+
+    def seed(*values)
+      @klass.transaction(requires_new: true) do
+        values.each { |value| create!(@field => value) }
+      end
     end
 
     def fetch(value)

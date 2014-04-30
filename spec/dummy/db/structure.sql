@@ -614,3 +614,4 @@ CREATE UNIQUE INDEX paths__u_path ON paths USING btree (path);
 SET search_path TO "$user",public;
 
 INSERT INTO schema_migrations (version) VALUES ('20121019040009');
+
