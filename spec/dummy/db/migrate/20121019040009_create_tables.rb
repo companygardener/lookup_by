@@ -1,6 +1,6 @@
 class CreateTables < ActiveRecord::Migration
   def up
-    create_lookup_tables :cities, :states, :postal_codes, :streets
+    create_lookup_tables :cities, :states, :postal_codes, :streets, :countries
 
     create_lookup_table :user_agents
     create_lookup_table :email_addresses
@@ -21,6 +21,7 @@ class CreateTables < ActiveRecord::Migration
       t.belongs_to :state
       t.belongs_to :postal_code
       t.belongs_to :street
+      t.belongs_to :country
     end
   end
 end

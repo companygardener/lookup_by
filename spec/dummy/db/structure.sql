@@ -88,7 +88,8 @@ CREATE TABLE addresses (
     city_id integer,
     state_id integer,
     postal_code_id integer,
-    street_id integer
+    street_id integer,
+    country_id integer
 );
 
 
@@ -138,6 +139,35 @@ CREATE SEQUENCE cities_city_id_seq
 --
 
 ALTER SEQUENCE cities_city_id_seq OWNED BY cities.city_id;
+
+
+--
+-- Name: countries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE countries (
+    country_id integer NOT NULL,
+    country text NOT NULL
+);
+
+
+--
+-- Name: countries_country_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE countries_country_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: countries_country_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE countries_country_id_seq OWNED BY countries.country_id;
 
 
 --
@@ -388,6 +418,13 @@ ALTER TABLE ONLY cities ALTER COLUMN city_id SET DEFAULT nextval('cities_city_id
 
 
 --
+-- Name: country_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY countries ALTER COLUMN country_id SET DEFAULT nextval('countries_country_id_seq'::regclass);
+
+
+--
 -- Name: email_address_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -458,6 +495,14 @@ ALTER TABLE ONLY addresses
 
 ALTER TABLE ONLY cities
     ADD CONSTRAINT cities_pkey PRIMARY KEY (city_id);
+
+
+--
+-- Name: countries_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY countries
+    ADD CONSTRAINT countries_pkey PRIMARY KEY (country_id);
 
 
 --
@@ -540,6 +585,13 @@ CREATE UNIQUE INDEX accounts__u_account ON accounts USING btree (account);
 --
 
 CREATE UNIQUE INDEX cities__u_city ON cities USING btree (city);
+
+
+--
+-- Name: countries__u_country; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX countries__u_country ON countries USING btree (country);
 
 
 --

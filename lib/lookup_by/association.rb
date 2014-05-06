@@ -65,7 +65,10 @@ module LookupBy
 
         cast = options[:symbolize] ? ".to_sym" : ""
 
-        lookup_field  = class_name.constantize.lookup.field
+        klass = class_name.constantize
+        raise Error, "class #{class_name} does not use lookup_by" unless klass.respond_to?(:lookup)
+
+        lookup_field  = klass.lookup.field
         lookup_object = "#{class_name}[#{foreign_key}]"
 
         class_eval <<-METHODS, __FILE__, __LINE__.next
