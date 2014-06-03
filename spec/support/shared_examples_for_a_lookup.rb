@@ -4,7 +4,9 @@ shared_examples "a lookup" do
   it { should respond_to :lookup_by  }
   it { should respond_to :lookup_for }
 
-  its(:is_a_lookup?) { should be_true }
+  it "better be a lookup" do
+    expect(subject.is_a_lookup?).to be true
+  end
 
   it "raises with no args" do
     expect { subject[] }.to raise_error ArgumentError
