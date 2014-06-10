@@ -67,6 +67,8 @@ module LookupBy::Caching
       cache.should eq(1 => "change", 2 => "two", 3 => "three")
     end
 
-    its(:to_h) { should eq(1 => "one", 2 => "two") }
+    it "better include the values under test" do
+      expect(subject.to_h).to eq(1 => "one", 2 => "two")
+    end
   end
 end

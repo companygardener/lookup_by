@@ -96,7 +96,7 @@ describe LookupBy::Lookup do
     it_behaves_like "a read-through cache"
 
     it "is not testing when not writing through the LRU" do
-      subject.lookup.testing.should be_false
+      subject.lookup.testing.should be false
     end
   end
 
@@ -109,7 +109,7 @@ describe LookupBy::Lookup do
     it_behaves_like "a write-through cache"
 
     it "sets testing when RAILS_ENV=test" do
-      subject.lookup.testing.should be_true
+      subject.lookup.testing.should be true
     end
 
     it "does not write primary keys" do

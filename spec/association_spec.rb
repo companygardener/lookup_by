@@ -59,7 +59,9 @@ describe ::ActiveRecord::Base do
       it { should_not respond_to(:with_postal_codes) }
     end
 
-    its(:lookups) { should include(:city) }
+    it "better include the association under test in lookups" do
+      expect(subject.lookups).to include(:city)
+    end
   end
 end
 
