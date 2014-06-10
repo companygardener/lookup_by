@@ -7,6 +7,7 @@ gemspec
 
 group :development, :test do
   gem 'rspec'
+  gem 'rspec-its'
   gem 'database_cleaner'
 
   gem "pg", platform: :ruby

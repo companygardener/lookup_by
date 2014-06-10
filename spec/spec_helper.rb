@@ -20,6 +20,7 @@ rescue LoadError
 end
 
 require 'rspec'
+require 'rspec/its'
 require 'database_cleaner'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
