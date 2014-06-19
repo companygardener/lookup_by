@@ -10,6 +10,9 @@ class CreateTables < ActiveRecord::Migration
 
     create_lookup_table :ip_addresses, lookup_type: :inet
 
+    create_lookup_table :uncacheables
+    create_lookup_table :unfindables
+
     enable_extension 'uuid-ossp'
 
     execute 'CREATE SCHEMA traffic;'

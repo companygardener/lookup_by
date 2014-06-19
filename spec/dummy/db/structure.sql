@@ -354,6 +354,64 @@ ALTER SEQUENCE streets_street_id_seq OWNED BY streets.street_id;
 
 
 --
+-- Name: uncacheables; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE uncacheables (
+    uncacheable_id integer NOT NULL,
+    uncacheable text NOT NULL
+);
+
+
+--
+-- Name: uncacheables_uncacheable_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE uncacheables_uncacheable_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: uncacheables_uncacheable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE uncacheables_uncacheable_id_seq OWNED BY uncacheables.uncacheable_id;
+
+
+--
+-- Name: unfindables; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE unfindables (
+    unfindable_id integer NOT NULL,
+    unfindable text NOT NULL
+);
+
+
+--
+-- Name: unfindables_unfindable_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE unfindables_unfindable_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: unfindables_unfindable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE unfindables_unfindable_id_seq OWNED BY unfindables.unfindable_id;
+
+
+--
 -- Name: user_agents; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -467,6 +525,20 @@ ALTER TABLE ONLY streets ALTER COLUMN street_id SET DEFAULT nextval('streets_str
 
 
 --
+-- Name: uncacheable_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY uncacheables ALTER COLUMN uncacheable_id SET DEFAULT nextval('uncacheables_uncacheable_id_seq'::regclass);
+
+
+--
+-- Name: unfindable_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY unfindables ALTER COLUMN unfindable_id SET DEFAULT nextval('unfindables_unfindable_id_seq'::regclass);
+
+
+--
 -- Name: user_agent_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -554,6 +626,22 @@ ALTER TABLE ONLY streets
 
 
 --
+-- Name: uncacheables_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY uncacheables
+    ADD CONSTRAINT uncacheables_pkey PRIMARY KEY (uncacheable_id);
+
+
+--
+-- Name: unfindables_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY unfindables
+    ADD CONSTRAINT unfindables_pkey PRIMARY KEY (unfindable_id);
+
+
+--
 -- Name: user_agents_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -634,6 +722,20 @@ CREATE UNIQUE INDEX statuses__u_status ON statuses USING btree (status);
 --
 
 CREATE UNIQUE INDEX streets__u_street ON streets USING btree (street);
+
+
+--
+-- Name: uncacheables__u_uncacheable; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX uncacheables__u_uncacheable ON uncacheables USING btree (uncacheable);
+
+
+--
+-- Name: unfindables__u_unfindable; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX unfindables__u_unfindable ON unfindables USING btree (unfindable);
 
 
 --

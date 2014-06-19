@@ -25,6 +25,8 @@ module LookupBy
       when true
         @type    = :all
         @read  ||= false
+
+        raise ArgumentError, "`#{@klass}.lookup_by :#{@field}` Should be `cache: true` or `cache: N, find_or_create: true`" if @write
       when ::Integer
         raise ArgumentError, "`#{@klass}.lookup_by :#{@field}` options[:find] must be true when caching N" if @read == false
 

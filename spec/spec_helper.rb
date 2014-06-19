@@ -24,6 +24,8 @@ require 'rspec/its'
 require 'database_cleaner'
 require 'pry'
 
+ActiveRecord::Migration.maintain_test_schema! if defined?(ActiveRecord::Migration)
+
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("../support/**/*.rb")].each {|f| require f}

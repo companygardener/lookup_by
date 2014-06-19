@@ -29,6 +29,12 @@ describe LookupBy::Lookup do
     end
   end
 
+  context "Uncacheable.lookup_by :column, cache: true, find_or_create: true" do
+    it "fails when trying to cache and write-through" do
+      expect { Uncacheable }.to raise_error
+    end
+  end
+
   context "City.lookup_by :column" do
     subject { City }
 
