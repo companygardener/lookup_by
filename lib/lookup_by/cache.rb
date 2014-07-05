@@ -14,6 +14,7 @@ module LookupBy
       @write            = options[:find_or_create]
       @allow_blank      = options[:allow_blank] || false
       @normalize        = options[:normalize]
+      @raise_on_miss    = options[:raise] || false
       @testing          = false
       @enabled          = true
 
@@ -38,6 +39,10 @@ module LookupBy
         @testing = true if Rails.env.test? && @write
       else
         @read    = true
+      end
+
+      if @write && @raise_on_miss
+        raise ArgumentError, "`#{@klass}.lookup_by :#{@field}` can not use `raise: true` and `find_or_create: true` together."
       end
     end
 
@@ -86,6 +91,11 @@ module LookupBy
       @cache[found.id] = found  if found && cache?
 
       found ||= db_write(value) if @write
+
+      if @raise_on_miss && found.nil?
+        raise LookupBy::RecordNotFound, "No #{@klass.name} lookup record found for value: #{value.inspect}"
+      end
+
       found
     end
 
