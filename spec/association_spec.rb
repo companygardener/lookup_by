@@ -5,7 +5,7 @@ describe ::ActiveRecord::Base do
   describe "macro methods" do
     subject { described_class }
 
-    it { should respond_to :lookup_for }
+    it { is_expected.to respond_to :lookup_for }
   end
 
   describe ".lookup_for" do
@@ -50,13 +50,13 @@ describe ::ActiveRecord::Base do
     end
 
     context "scope: nil" do
-      it { should respond_to(:with_city).with(1).arguments }
-      it { should respond_to(:with_cities).with(2).arguments }
+      it { is_expected.to respond_to(:with_city).with(1).arguments }
+      it { is_expected.to respond_to(:with_cities).with(2).arguments }
     end
 
     context "scope: false" do
-      it { should_not respond_to(:with_postal_code) }
-      it { should_not respond_to(:with_postal_codes) }
+      it { is_expected.not_to respond_to(:with_postal_code) }
+      it { is_expected.not_to respond_to(:with_postal_codes) }
     end
 
     it "better include the association under test in lookups" do
@@ -77,7 +77,7 @@ describe LookupBy::Association do
 
     it "accepts Integers" do
       subject.city = City.where(city: "New York").first.id
-      subject.city.should eq "New York"
+      expect(subject.city).to eq "New York"
     end
 
     it "rejects symbols" do
@@ -86,12 +86,12 @@ describe LookupBy::Association do
 
     it "returns strings" do
       subject.city = "New York"
-      subject.city.should eq "New York"
+      expect(subject.city).to eq "New York"
     end
 
     it "allows missing values" do
       subject.city = "Chicago"
-      subject.city.should be_nil
+      expect(subject.city).to be_nil
     end
   end
 
@@ -100,12 +100,12 @@ describe LookupBy::Association do
 
     it "allows symbols" do
       subject.state = :AL
-      subject.state.should eq :AL
+      expect(subject.state).to eq :AL
     end
 
     it "returns symbols" do
       subject.state = "AL"
-      subject.state.should eq :AL
+      expect(subject.state).to eq :AL
     end
 
     it "rejects missing values" do

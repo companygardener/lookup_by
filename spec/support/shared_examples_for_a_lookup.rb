@@ -1,8 +1,8 @@
 shared_examples "a lookup" do
-  it { should respond_to :[] }
-  it { should respond_to :lookup }
-  it { should respond_to :lookup_by  }
-  it { should respond_to :lookup_for }
+  it { is_expected.to respond_to :[] }
+  it { is_expected.to respond_to :lookup }
+  it { is_expected.to respond_to :lookup_by  }
+  it { is_expected.to respond_to :lookup_for }
 
   it "better be a lookup" do
     expect(subject.is_a_lookup?).to be true
@@ -13,19 +13,19 @@ shared_examples "a lookup" do
   end
 
   it "returns nil for nil" do
-    subject[nil].should be_nil
-    subject[nil, nil].should == [nil, nil]
+    expect(subject[nil]).to be_nil
+    expect(subject[nil, nil]).to eq([nil, nil])
   end
 
   it "returns nil for empty strings" do
-    subject[""].should be_nil
-    subject["", ""].should == [nil, nil]
+    expect(subject[""]).to be_nil
+    expect(subject["", ""]).to eq([nil, nil])
   end
 
   it "returns itself" do
     if first = subject.first
-      subject[first].should eq first
-      subject[first, first].should == [first, first]
+      expect(subject[first]).to eq first
+      expect(subject[first, first]).to eq([first, first])
     end
   end
 
@@ -49,7 +49,7 @@ shared_examples "a proxy" do
 
     subject[original.name]
     subject.update(original.id, name: "updated")
-    subject[original.id].name.should_not eq original.name
+    expect(subject[original.id].name).not_to eq original.name
   end
 
   it "allows .destroy_all" do
@@ -58,7 +58,7 @@ shared_examples "a proxy" do
 
   it "allows .destroy" do
     instance = subject.create(name: "foo")
-    subject.destroy(instance.id).should == instance
+    expect(subject.destroy(instance.id)).to eq(instance)
   end
 
   it "allows .delete_all" do
@@ -66,7 +66,7 @@ shared_examples "a proxy" do
   end
 
   it "allows .delete" do
-    subject.delete(1).should == 0
+    expect(subject.delete(1)).to eq(0)
   end
 end
 
@@ -81,7 +81,7 @@ shared_examples "a cache" do
     subject[original.name]
 
     subject.update(original.id, subject.lookup.field => "updated")
-    subject[original.id].name.should eq "original"
+    expect(subject[original.id].name).to eq "original"
 
     subject.lookup.testing = was_testing
   end
@@ -110,28 +110,28 @@ shared_examples "a strict cache" do
 
   xit "does cache .all" do
     new = subject.create(name: 'add')
-    subject.all.to_a.should_not include(new)
+    expect(subject.all.to_a).not_to include(new)
   end
 
   xit "reloads .all when called with args" do
     new = subject.create(name: "new")
-    subject.all.to_a.should_not include(new)
-    subject.all({}).to_a.should include(new)
+    expect(subject.all.to_a).not_to include(new)
+    expect(subject.all({}).to_a).to include(new)
   end
 
   it "caches .pluck" do
     subject.create(name: "pluck this")
-    subject.pluck(:name).should_not include("pluck this")
+    expect(subject.pluck(:name)).not_to include("pluck this")
   end
 
   it "returns nil on miss" do
-    subject["foo"].should be_nil
+    expect(subject["foo"]).to be_nil
   end
 
   it "ignores new records" do
     subject.create(name: "new record")
 
-    subject["new record"].should be_nil
+    expect(subject["new record"]).to be_nil
   end
 end
 
@@ -142,17 +142,17 @@ shared_examples "a read-through proxy" do
 
   it "reloads .all" do
     new = subject.create(name: 'add')
-    subject.all.to_a.should include (new)
+    expect(subject.all.to_a).to include (new)
   end
 
   it "reloads .pluck" do
     subject.create(name: "pluck this")
-    subject.pluck(subject.lookup.field).should include("pluck this")
+    expect(subject.pluck(subject.lookup.field)).to include("pluck this")
   end
 
   it "finds new records" do
     created = subject.create(name: "new record")
-    subject["new record"].id.should eq created.id
+    expect(subject["new record"].id).to eq created.id
   end
 end
 
@@ -169,7 +169,7 @@ shared_examples "a read-through cache" do
     subject[created.name]
 
     subject.update(created.id, name: "changed")
-    subject[created.id].name.should eq "cached"
+    expect(subject[created.id].name).to eq "cached"
 
     subject.lookup.testing = was_testing
   end
@@ -189,15 +189,15 @@ shared_examples "a write-through cache" do
     found = subject["found"]
 
     subject.update(found.id, name: "missing")
-    subject[found.id].name.should eq "missing"
+    expect(subject[found.id].name).to eq "missing"
   end
 end
 
 shared_examples "a lookup for" do |field|
-  it { should respond_to field }
-  it { should respond_to "#{field}=" }
-  it { should respond_to "raw_#{field}" }
-  it { should respond_to "#{field}_before_type_cast" }
+  it { is_expected.to respond_to field }
+  it { is_expected.to respond_to "#{field}=" }
+  it { is_expected.to respond_to "raw_#{field}" }
+  it { is_expected.to respond_to "#{field}_before_type_cast" }
 
   it "accepts nil" do
     expect { subject.send "#{field}=", nil }.to_not raise_error
@@ -205,7 +205,7 @@ shared_examples "a lookup for" do |field|
 
   it "converts empty strings to nil" do
     subject.send "#{field}=",  ""
-    subject.send(field).should be_nil
+    expect(subject.send(field)).to be_nil
   end
 
   it "rejects other argument types" do

@@ -15,46 +15,46 @@ module LookupBy::Caching
     subject { @cache }
 
     it "stores entries" do
-      @cache[1].should eq "one"
-      @cache[2].should eq "two"
+      expect(@cache[1]).to eq "one"
+      expect(@cache[2]).to eq "two"
     end
 
     it "drops oldest" do
       @cache[3] = "three"
 
-      @cache[1].should be_nil
+      expect(@cache[1]).to be_nil
     end
 
     it "keeps gets" do
       @cache[1]
       @cache[3] = "three"
 
-      @cache[1].should eq "one"
-      @cache[2].should be_nil
-      @cache[3].should eq "three"
+      expect(@cache[1]).to eq "one"
+      expect(@cache[2]).to be_nil
+      expect(@cache[3]).to eq "three"
     end
 
     it "keeps sets" do
       @cache[1] = "one"
       @cache[3] = "three"
 
-      @cache[1].should eq "one"
-      @cache[2].should be_nil
-      @cache[3].should eq "three"
+      expect(@cache[1]).to eq "one"
+      expect(@cache[2]).to be_nil
+      expect(@cache[3]).to eq "three"
     end
 
     it "#clear" do
       cache = LRU.new(2)
 
       cache[1] = "one"
-      cache.size.should eq 1
+      expect(cache.size).to eq 1
       cache.clear
-      cache.size.should eq 0
+      expect(cache.size).to eq 0
     end
 
     specify "#merge" do
-      @cache.merge(1 => "change", 3 => "three").should
-        eq(1 => "change", 2 => "two", 3 => "three")
+      merged = @cache.merge(1 => "change", 3 => "three")
+      expect(merged).to eq(1 => "change", 2 => "two", 3 => "three")
     end
 
     specify "#merge!" do
@@ -64,7 +64,7 @@ module LookupBy::Caching
       cache[2] = "two"
 
       cache.merge!(1 => "change", 3 => "three")
-      cache.should eq(1 => "change", 2 => "two", 3 => "three")
+      expect(cache).to eq(1 => "change", 2 => "two", 3 => "three")
     end
 
     it "better include the values under test" do
