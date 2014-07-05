@@ -9,4 +9,5 @@ spec/dummy/tmp/
 spec/dummy/.sass-cache
 coverage/
 Gemfile.lock
+gemfiles/*.lock
 tags
