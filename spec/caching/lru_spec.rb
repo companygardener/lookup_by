@@ -54,16 +54,19 @@ module LookupBy::Caching
 
     specify "#merge" do
       merged = @cache.merge(1 => "change", 3 => "three")
-      expect(merged).to eq(1 => "change", 2 => "two", 3 => "three")
+      expect(merged).to be_instance_of(LRU)
+      expect(merged).to eq(1 => "change", 3 => "three")
     end
 
     specify "#merge!" do
-      cache = LRU.new(3)
+      cache     = LRU.new(3)
+      object_id = cache.object_id
 
       cache[1] = "one"
       cache[2] = "two"
 
       cache.merge!(1 => "change", 3 => "three")
+      expect(cache.object_id).to eql(object_id)
       expect(cache).to eq(1 => "change", 2 => "two", 3 => "three")
     end
 

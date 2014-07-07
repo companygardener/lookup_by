@@ -28,8 +28,13 @@ module LookupBy
         prune
       end
 
+      def merge(hash)
+        dup.merge!(hash)
+      end
+
       def merge!(hash)
         hash.each { |k, v| self[k] = v }
+        self
       end
 
       def delete(key)
