@@ -22,7 +22,7 @@ module LookupBy
         end
 
         options.symbolize_keys!
-        options.assert_valid_keys(:class_name, :foreign_key, :symbolize, :strict, :scope)
+        options.assert_valid_keys(:class_name, :foreign_key, :symbolize, :strict, :scope, :inverse_scope)
 
         field = field.to_sym
 
@@ -37,14 +37,30 @@ module LookupBy
         @lookups ||= []
         @lookups << field
 
-        scope_name = "with_#{field}" unless options[:scope] == false
+        scope_name =
+          if options[:scope] == false
+            nil
+          elsif !options.key?(:scope) || options[:scope] == true
+            "with_#{field}"
+          else
+            options[:scope].to_s
+          end
 
-        if scope_name
-          single_scope = scope_name
-          plural_scope = scope_name.pluralize
+        inverse_scope_name =
+          if options[:inverse_scope] == false
+            nil
+          elsif !options.key?(:inverse_scope) || options[:inverse_scope] == true
+            "without_#{field}"
+          else
+            options[:inverse_scope].to_s
+          end
 
-          raise Error, "#{single_scope} already exists on #{self}. Use `lookup_for #{field}, scope: false` if you don't want scope :#{single_scope}" if respond_to?(single_scope)
-          raise Error, "#{plural_scope} already exists on #{self}. Use `lookup_for #{field}, scope: false` if you don't want scope :#{plural_scope}" if respond_to?(plural_scope)
+        if scope_name && respond_to?(scope_name)
+          raise Error, "#{scope_name} already exists on #{self}."
+        end
+
+        if inverse_scope_name && respond_to?(inverse_scope_name)
+          raise Error, "#{inverse_scope_name} already exists on #{self}."
         end
 
         class_name = options[:class_name] || field
@@ -59,8 +75,17 @@ module LookupBy
         strict = true if strict.nil?
 
         class_eval <<-SCOPES, __FILE__, __LINE__.next if scope_name
-          scope :#{scope_name},           ->(name)   { where(#{foreign_key}: #{class_name}[name]) }
-          scope :#{scope_name.pluralize}, ->(*names) { where(#{foreign_key}: #{class_name}[*names]) }
+          scope :#{scope_name}, ->(*names) { where(#{foreign_key}: #{class_name}[*names]) }
+        SCOPES
+
+        class_eval <<-SCOPES, __FILE__, __LINE__.next if inverse_scope_name
+          scope :#{inverse_scope_name}, ->(*names) {
+            if names.length != 1
+              where('#{foreign_key} NOT IN (?)', #{class_name}[*names])
+            else
+              where('#{foreign_key} <> ?', #{class_name}[*names])
+            end
+          }
         SCOPES
 
         cast = options[:symbolize] ? ".to_sym" : ""

@@ -28,13 +28,9 @@ describe ::ActiveRecord::Base do
         public :define_method, :remove_method
       end
 
-      [:with_foo, :with_foos].each do |method|
-        subject.singleton_class.define_method(method) { }
-
-        expect { subject.lookup_for :foo }.to raise_error LookupBy::Error, /already exists/
-
-        subject.singleton_class.remove_method(method)
-      end
+      subject.singleton_class.define_method(:with_foo) {}
+      expect { subject.lookup_for :foo }.to raise_error LookupBy::Error, /already exists/
+      subject.singleton_class.remove_method(:with_foo)
     end
 
     it "requires a foreign key" do
@@ -47,16 +43,6 @@ describe ::ActiveRecord::Base do
 
     it "requires the lookup model to be using lookup_by" do
       expect { subject.lookup_for :country }.to raise_error LookupBy::Error, /Country does not use lookup_by/
-    end
-
-    context "scope: nil" do
-      it { is_expected.to respond_to(:with_city).with(1).arguments }
-      it { is_expected.to respond_to(:with_cities).with(2).arguments }
-    end
-
-    context "scope: false" do
-      it { is_expected.not_to respond_to(:with_postal_code) }
-      it { is_expected.not_to respond_to(:with_postal_codes) }
     end
 
     it "better include the association under test in lookups" do
@@ -122,6 +108,87 @@ describe LookupBy::Association do
   context "Missing.lookup_for :city" do
     it "does not raise foreign key error when table hasn't been created" do
       expect { require "missing" }.to_not raise_error
+    end
+  end
+end
+
+describe LookupBy::Association, 'scopes' do
+  subject(:klass) do
+    Class.new(ActiveRecord::Base) do
+      self.table_name = 'addresses'
+    end
+  end
+
+  describe 'nomenclature' do
+    context 'default of :with_<foreign_key>' do
+      before { klass.lookup_for :city }
+      it { is_expected.to respond_to(:with_city) }
+    end
+
+    context 'scope: false' do
+      before { klass.lookup_for :city, scope: false }
+      it { is_expected.not_to respond_to(:with_city) }
+    end
+
+    context 'scope: :with_alternate_name' do
+      before { klass.lookup_for :city, scope: :with_home }
+      it { is_expected.to respond_to(:with_home) }
+    end
+
+    context 'scope: "with_alternate_name"' do
+      before { klass.lookup_for :city, scope: "with_home" }
+      it { is_expected.to respond_to(:with_home) }
+    end
+
+    context 'default inverse scope of :without_<foreign_key>' do
+      before { klass.lookup_for :city }
+      it { is_expected.to respond_to(:without_city) }
+    end
+
+    context 'inverse_scope: false' do
+      before { klass.lookup_for :city, inverse_scope: false }
+      it { is_expected.not_to respond_to(:without_city) }
+    end
+
+    context 'inverse_scope: true' do
+      before { klass.lookup_for :city, inverse_scope: true }
+      it { is_expected.to respond_to(:without_city) }
+    end
+
+    context 'inverse_scope: :with_alternate_name' do
+      before { klass.lookup_for :city, inverse_scope: :foreign_to }
+      it { is_expected.to respond_to(:foreign_to) }
+    end
+  end
+
+  context 'functionality' do
+    before do
+      City.create!(city: 'Chicago')
+      City.create!(city: 'Madison')
+      klass.lookup_for :city, scope: :inside_city, inverse_scope: :outside_city
+    end
+
+    let(:chicago) { City['Chicago'] }
+    let(:madison) { City['Madison'] }
+
+    specify 'with_city(a)' do
+      scope = klass.inside_city('Chicago')
+      expect(scope.to_sql).to eq klass.where(city_id: chicago.id).to_sql
+    end
+
+    specify 'with_city(a, b)' do
+      scope = klass.inside_city('Chicago', 'Madison')
+      expect(scope.to_sql).to eq klass.where(city_id: [chicago.id, madison.id]).to_sql
+    end
+
+    specify 'without_city(a)' do
+      scope = klass.outside_city('Chicago')
+      expect(scope.to_sql).to eq klass.where('city_id <> ?', chicago.id).to_sql
+    end
+
+    specify 'without_city(a, b)' do
+      scope = klass.outside_city('Chicago', 'Madison')
+      expect(scope.to_sql).to eq klass.where('city_id NOT IN (?)', [chicago.id, madison.id]).to_sql
     end
   end
 end
