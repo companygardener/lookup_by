@@ -125,7 +125,7 @@ module LookupBy
       case @primary_key_type
       when :integer
         value.is_a? Integer
-      when :uuid
+      when :uuid, :string
         value =~ UUID_REGEX
       end
     end
