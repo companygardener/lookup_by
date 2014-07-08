@@ -62,7 +62,8 @@ describe LookupBy::Lookup do
     end
 
     it "has a small primary key" do
-      expect { Status.create(status_id: 100_000, status: "too_big") }.to raise_error
+      sql_type = Status.columns_hash['status_id'].sql_type
+      expect(sql_type).to eq('smallint')
     end
   end
 
@@ -157,7 +158,7 @@ describe LookupBy::Lookup do
     end
   end
 
-  context "Path.lookup_by :column, cache: true, find_or_create: true (UUID primary key)" do
+  context "Path.lookup_by :column, cache: N, find_or_create: true (UUID primary key)" do
     subject { Path }
 
     it_behaves_like "a lookup"
