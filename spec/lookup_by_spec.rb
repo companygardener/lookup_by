@@ -6,14 +6,14 @@ describe ::ActiveRecord::Base do
   describe "macro methods" do
     subject { described_class }
 
-    it { should respond_to :lookup_by    }
-    it { should respond_to :is_a_lookup? }
+    it { is_expected.to respond_to :lookup_by    }
+    it { is_expected.to respond_to :is_a_lookup? }
   end
 
   describe "instance methods" do
     subject { Status.new }
 
-    it { should respond_to :name }
+    it { is_expected.to respond_to :name }
   end
 
 end
@@ -24,7 +24,8 @@ describe LookupBy::Lookup do
       City.lookup.seed 'Boston'
       City.lookup.seed 'Chicago', 'New York City'
 
-      City.all.map(&:name).sort.should eq(['Boston', 'Chicago', 'New York City'])
+      names = City.all.map(&:name).sort
+      expect(names.sort).to eq(['Boston', 'Chicago', 'New York City'])
       City.lookup.clear
     end
   end
@@ -43,7 +44,7 @@ describe LookupBy::Lookup do
     it_behaves_like "a read-through proxy"
 
     it "returns nil on db miss" do
-      subject["foo"].should be_nil
+      expect(subject["foo"]).to be_nil
     end
   end
 
@@ -57,7 +58,7 @@ describe LookupBy::Lookup do
     it "normalizes the lookup field" do
       status = subject.create(subject.lookup.field => "paid")
 
-      subject["  paid "].id.should == status.id
+      expect(subject["  paid "].id).to eq(status.id)
     end
 
     it "has a small primary key" do
@@ -82,7 +83,7 @@ describe LookupBy::Lookup do
     it_behaves_like "a strict cache"
 
     it "preloads the cache" do
-      subject.lookup.cache.should_not be_empty
+      expect(subject.lookup.cache).not_to be_empty
     end
   end
 
@@ -102,7 +103,7 @@ describe LookupBy::Lookup do
     it_behaves_like "a read-through cache"
 
     it "is not testing when not writing through the LRU" do
-      subject.lookup.testing.should be false
+      expect(subject.lookup.testing).to be false
     end
   end
 
@@ -115,7 +116,7 @@ describe LookupBy::Lookup do
     it_behaves_like "a write-through cache"
 
     it "sets testing when RAILS_ENV=test" do
-      subject.lookup.testing.should be true
+      expect(subject.lookup.testing).to be true
     end
 
     it "does not write primary keys" do
@@ -150,9 +151,9 @@ describe LookupBy::Lookup do
     it "allows lookup by IPAddr" do
       ip = subject['127.0.0.1']
 
-      subject[IPAddr.new('127.0.0.1')].should == ip
-      subject[ip.id].should == ip
-      subject['127.0.0.1'].should == ip
+      expect(subject[IPAddr.new('127.0.0.1')]).to eq(ip)
+      expect(subject[ip.id]).to eq(ip)
+      expect(subject['127.0.0.1']).to eq(ip)
     end
   end
 
@@ -166,8 +167,8 @@ describe LookupBy::Lookup do
 
     it 'treats UUIDs as the primary key' do
       path = subject['/']
-      path.id.should match(LookupBy::UUID_REGEX)
-      subject[path.id].should == path
+      expect(path.id).to match(LookupBy::UUID_REGEX)
+      expect(subject[path.id]).to eq(path)
     end
   end
 
