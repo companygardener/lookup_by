@@ -258,6 +258,64 @@ ALTER SEQUENCE postal_codes_postal_code_id_seq OWNED BY postal_codes.postal_code
 
 
 --
+-- Name: raisins; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE raisins (
+    raisin_id integer NOT NULL,
+    raisin text NOT NULL
+);
+
+
+--
+-- Name: raisins_raisin_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE raisins_raisin_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: raisins_raisin_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE raisins_raisin_id_seq OWNED BY raisins.raisin_id;
+
+
+--
+-- Name: read_through_raisins; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE read_through_raisins (
+    read_through_raisin_id integer NOT NULL,
+    read_through_raisin text NOT NULL
+);
+
+
+--
+-- Name: read_through_raisins_read_through_raisin_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE read_through_raisins_read_through_raisin_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: read_through_raisins_read_through_raisin_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE read_through_raisins_read_through_raisin_id_seq OWNED BY read_through_raisins.read_through_raisin_id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -504,6 +562,20 @@ ALTER TABLE ONLY postal_codes ALTER COLUMN postal_code_id SET DEFAULT nextval('p
 
 
 --
+-- Name: raisin_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY raisins ALTER COLUMN raisin_id SET DEFAULT nextval('raisins_raisin_id_seq'::regclass);
+
+
+--
+-- Name: read_through_raisin_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY read_through_raisins ALTER COLUMN read_through_raisin_id SET DEFAULT nextval('read_through_raisins_read_through_raisin_id_seq'::regclass);
+
+
+--
 -- Name: state_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -599,6 +671,22 @@ ALTER TABLE ONLY ip_addresses
 
 ALTER TABLE ONLY postal_codes
     ADD CONSTRAINT postal_codes_pkey PRIMARY KEY (postal_code_id);
+
+
+--
+-- Name: raisins_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY raisins
+    ADD CONSTRAINT raisins_pkey PRIMARY KEY (raisin_id);
+
+
+--
+-- Name: read_through_raisins_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY read_through_raisins
+    ADD CONSTRAINT read_through_raisins_pkey PRIMARY KEY (read_through_raisin_id);
 
 
 --
@@ -701,6 +789,20 @@ CREATE UNIQUE INDEX ip_addresses__u_ip_address ON ip_addresses USING btree (ip_a
 --
 
 CREATE UNIQUE INDEX postal_codes__u_postal_code ON postal_codes USING btree (postal_code);
+
+
+--
+-- Name: raisins__u_raisin; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX raisins__u_raisin ON raisins USING btree (raisin);
+
+
+--
+-- Name: read_through_raisins__u_read_through_raisin; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX read_through_raisins__u_read_through_raisin ON read_through_raisins USING btree (read_through_raisin);
 
 
 --

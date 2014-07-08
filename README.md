@@ -244,6 +244,23 @@ lookup_by :column_name
 lookup_by :column_name, cache: 20, find_or_create: true
 ```
 
+### Raise on Miss
+
+You can configure cache misses to raise a `LookupBy::RecordNotFound` error.
+
+```ruby
+# Return nil
+#   Default
+lookup_by :column_name, cache: true
+
+# Raise if not found pre-loaded cache
+lookup_by :column_name, cache: true, raise: true
+
+# Raise if not found in DB, either
+lookup_by :column_name, cache: true, find: true, raise: true
+```
+
+
 ### Normalize values
 
 ```ruby

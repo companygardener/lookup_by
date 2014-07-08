@@ -170,4 +170,42 @@ describe LookupBy::Lookup do
       subject[path.id].should == path
     end
   end
+
+  context "Raisin.lookup_by :column, cache: true, raise: true" do
+    subject { Raisin }
+
+    it_behaves_like "a lookup"
+    it_behaves_like "a cache"
+
+    it "raises LookupBy::RecordNotFound on cache miss" do
+      expect {
+        subject[:not_disgusting]
+      }.to raise_error(LookupBy::RecordNotFound, /Raisin.*not_disgusting/)
+    end
+  end
+
+  context "ReadThroughRaisin.lookup_by :column, cache: true, find: true, raise: true" do
+    subject { ReadThroughRaisin }
+
+    it_behaves_like "a lookup"
+    it_behaves_like "a cache"
+    it_behaves_like "a read-through cache"
+
+    it "raises LookupBy::RecordNotFound on cache and DB miss" do
+      expect {
+        subject[:tasty]
+      }.to raise_error(LookupBy::RecordNotFound, /Raisin.*tasty/)
+    end
+  end
+
+  context "Raisin.lookup_by :column, find_or_create: true, raise: true" do
+    it "raises ArgumentError, as `raise` and `find_or_create` can not exist" do
+      expect {
+        class WriteThroughRaisin < ActiveRecord::Base
+          self.table_name = 'raisins'
+          lookup_by :raisin, find_or_create: true, raise: true
+        end
+      }.to raise_error(ArgumentError)
+    end
+  end
 end
