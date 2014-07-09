@@ -74,7 +74,7 @@ lookup_by :column_name
 
 lookup_for :status
 # Defines #status and #status= instance methods that transparently reference the lookup table.
-# Defines .with_status(name) and .with_statuses(*names) scopes on the model.
+# Defines .with_status(*names) and .without_status(*names) scopes on the model.
 ```
 
 ### Define the lookup model
