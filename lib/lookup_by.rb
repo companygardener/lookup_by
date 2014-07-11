@@ -12,6 +12,9 @@ module LookupBy
   autoload :Lookup,      "lookup_by/lookup"
   autoload :IPAddr,      "ipaddr"
 
+  autoload :QueryMethods,     "lookup_by/query_methods"
+  autoload :PredicateBuilder, "lookup_by/predicate_builder"
+
   module Caching
     autoload :LRU,       "lookup_by/caching/lru"
     autoload :SafeLRU,   "lookup_by/caching/safe_lru"

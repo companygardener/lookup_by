@@ -34,8 +34,8 @@ module LookupBy
           attr_reader :lookups
         end
 
-        @lookups ||= []
-        @lookups << field
+        @lookups ||= {}
+        @lookups[field] = options.dup
 
         scope_name =
           if options[:scope] == false
@@ -95,6 +95,11 @@ module LookupBy
 
         lookup_field  = klass.lookup.field
         lookup_object = "#{class_name}[#{foreign_key}]"
+
+        @lookups[field].merge!(
+          class:       klass,
+          foreign_key: foreign_key
+        )
 
         class_eval <<-METHODS, __FILE__, __LINE__.next
           def raw_#{field}

@@ -14,6 +14,14 @@ module LookupBy
         ActiveRecord::Migration::CommandRecorder.class_eval do
           include Lookup::CommandRecorderMethods
         end
+
+        ActiveRecord::PredicateBuilder.class_eval do
+          include LookupBy::PredicateBuilder
+        end
+
+        ActiveRecord::Relation.instance_eval do
+          include LookupBy::QueryMethods
+        end
       end
     end
   end
