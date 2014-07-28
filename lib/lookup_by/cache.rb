@@ -33,7 +33,7 @@ module LookupBy
 
         @type    = :lru
         @limit   = options[:cache]
-        @cache   = Rails.configuration.allow_concurrency ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
+        @cache   = concurrency_enabled? ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
         @read    = true
         @write ||= false
         @testing = true if Rails.env.test? && @write
@@ -188,6 +188,11 @@ module LookupBy
 
     def increment(type, stat)
       @stats[type][stat] += 1
+    end
+
+    def concurrency_enabled?
+      return true if Rails.configuration.allow_concurrency
+      Rails::VERSION::MAJOR > 3 && Rails.configuration.cache_classes && Rails.configuration.eager_load
     end
   end
 end
