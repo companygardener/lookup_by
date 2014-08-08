@@ -33,7 +33,7 @@ module LookupBy
 
         @type    = :lru
         @limit   = options[:cache]
-        @cache   = Rails.configuration.allow_concurrency ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
+        @cache   = concurrent? ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
         @read    = true
         @write ||= false
         @testing = true if Rails.env.test? && @write
@@ -130,6 +130,15 @@ module LookupBy
     end
 
   private
+
+    def concurrent?
+      case Rails::VERSION::MAJOR
+      when 4 then Rails.configuration.cache_classes && Rails.configuration.eager_load
+      when 3 then Rails.configuration.allow_concurrency
+      else
+        true
+      end
+    end
 
     def primary_key?(value)
       case @primary_key_type
