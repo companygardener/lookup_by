@@ -1,77 +1,58 @@
-require "spec_helper"
+require "rails_helper"
 require "lookup_by/caching/lru"
 
 include LookupBy::Caching
 
-module LookupBy::Caching
-  describe LRU do
-    before(:each) do
-      @cache = LRU.new(2)
+describe LookupBy::Caching::LRU do
+  let(:cache) do
+    cache = LRU.new(2)
 
-      @cache[1] = "one"
-      @cache[2] = "two"
+    cache[1] = "one"
+    cache[2] = "two"
+    cache
+  end
+
+  describe "#[]" do
+    it "caches" do
+      expect(cache[1]).to eq "one"
+      expect(cache[2]).to eq "two"
     end
 
-    subject { @cache }
+    it "promotes gets" do
+      cache[1]
+      cache[3] = "three"
 
-    it "stores entries" do
-      expect(@cache[1]).to eq "one"
-      expect(@cache[2]).to eq "two"
+      expect(cache[2]).to be_nil
+    end
+  end
+
+  describe "#[]=" do
+    it "promotes sets" do
+      cache[3] = "three"
+
+      expect(cache[1]).to be_nil
     end
 
-    it "drops oldest" do
-      @cache[3] = "three"
+    it "deletes least-recently accessed value" do
+      cache[3] = "three"
 
-      expect(@cache[1]).to be_nil
+      expect(cache[1]).to be_nil
     end
+  end
 
-    it "keeps gets" do
-      @cache[1]
-      @cache[3] = "three"
+  describe "#clear" do
+    specify { expect(cache.clear.size).to eq 0 }
+  end
 
-      expect(@cache[1]).to eq "one"
-      expect(@cache[2]).to be_nil
-      expect(@cache[3]).to eq "three"
-    end
+  describe "#size" do
+    specify { expect(cache.size).to eq 2 }
+  end
 
-    it "keeps sets" do
-      @cache[1] = "one"
-      @cache[3] = "three"
+  describe "#values" do
+    specify { expect(cache.values).to eq ["one", "two"] }
+  end
 
-      expect(@cache[1]).to eq "one"
-      expect(@cache[2]).to be_nil
-      expect(@cache[3]).to eq "three"
-    end
-
-    it "#clear" do
-      cache = LRU.new(2)
-
-      cache[1] = "one"
-      expect(cache.size).to eq 1
-      cache.clear
-      expect(cache.size).to eq 0
-    end
-
-    specify "#merge" do
-      merged = @cache.merge(1 => "change", 3 => "three")
-      expect(merged).to be_instance_of(LRU)
-      expect(merged).to eq(1 => "change", 3 => "three")
-    end
-
-    specify "#merge!" do
-      cache     = LRU.new(3)
-      object_id = cache.object_id
-
-      cache[1] = "one"
-      cache[2] = "two"
-
-      cache.merge!(1 => "change", 3 => "three")
-      expect(cache.object_id).to eql(object_id)
-      expect(cache).to eq(1 => "change", 2 => "two", 3 => "three")
-    end
-
-    it "better include the values under test" do
-      expect(subject.to_h).to eq(1 => "one", 2 => "two")
-    end
+  describe "#to_h" do
+    specify { expect(cache.to_h).to eq(1 => "one", 2 => "two") }
   end
 end

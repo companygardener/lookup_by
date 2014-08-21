@@ -470,6 +470,35 @@ ALTER SEQUENCE unfindables_unfindable_id_seq OWNED BY unfindables.unfindable_id;
 
 
 --
+-- Name: unsynchronizables; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE unsynchronizables (
+    unsynchronizable_id integer NOT NULL,
+    unsynchronizable text NOT NULL
+);
+
+
+--
+-- Name: unsynchronizables_unsynchronizable_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE unsynchronizables_unsynchronizable_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: unsynchronizables_unsynchronizable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE unsynchronizables_unsynchronizable_id_seq OWNED BY unsynchronizables.unsynchronizable_id;
+
+
+--
 -- Name: user_agents; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -611,6 +640,13 @@ ALTER TABLE ONLY unfindables ALTER COLUMN unfindable_id SET DEFAULT nextval('unf
 
 
 --
+-- Name: unsynchronizable_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY unsynchronizables ALTER COLUMN unsynchronizable_id SET DEFAULT nextval('unsynchronizables_unsynchronizable_id_seq'::regclass);
+
+
+--
 -- Name: user_agent_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -730,6 +766,14 @@ ALTER TABLE ONLY unfindables
 
 
 --
+-- Name: unsynchronizables_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY unsynchronizables
+    ADD CONSTRAINT unsynchronizables_pkey PRIMARY KEY (unsynchronizable_id);
+
+
+--
 -- Name: user_agents_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -845,6 +889,13 @@ CREATE UNIQUE INDEX unfindables__u_unfindable ON unfindables USING btree (unfind
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: unsynchronizables__u_unsynchronizable; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX unsynchronizables__u_unsynchronizable ON unsynchronizables USING btree (unsynchronizable);
 
 
 --

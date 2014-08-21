@@ -1,61 +1,55 @@
 module LookupBy
   module Caching
-    class LRU < ::Hash
+    class LRU
       attr_reader :lru
 
       def initialize(maxsize)
-        super()
-
         @maxsize = maxsize
         @lru     = []
-      end
-
-      def clear
-        @lru.clear
-
-        super
+        @hash    = {}
       end
 
       def [](key)
-        return nil unless has_key?(key)
+        return nil unless @hash.key?(key)
         touch(key)
-        super
+        @hash[key]
       end
 
       def []=(key, value)
         touch(key)
-        super
-        prune
-      end
-
-      def merge(hash)
-        dup.merge!(hash)
-      end
-
-      def merge!(hash)
-        hash.each { |k, v| self[k] = v }
-        self
+        @hash[key] = value
+        @hash.delete(@lru.shift) while @hash.size > @maxsize
       end
 
       def delete(key)
         @lru.delete(key)
 
-        super
+        @hash.delete(key)
+      end
+
+      def clear
+        @lru.clear
+        @hash.clear
+        self
+      end
+
+      def values
+        @hash.values
+      end
+
+      def size
+        @hash.size
       end
 
       def to_h
-        {}.merge!(self)
+        @hash.dup
       end
 
-    protected
-
+    private
       def touch(key)
+        # TODO: LRU deletes are O(N)
         @lru.delete(key)
         @lru << key
-      end
-
-      def prune
-        delete(@lru.shift) while size > @maxsize
       end
     end
   end

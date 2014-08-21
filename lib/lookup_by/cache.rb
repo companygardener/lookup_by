@@ -17,6 +17,7 @@ module LookupBy
       @raise_on_miss    = options[:raise] || false
       @testing          = false
       @enabled          = true
+      @safe             = options[:safe] || concurrent?
 
       @stats            = { db: Hash.new(0), cache: Hash.new(0) }
 
@@ -33,7 +34,7 @@ module LookupBy
 
         @type    = :lru
         @limit   = options[:cache]
-        @cache   = concurrent? ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
+        @cache   = @safe ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
         @read    = true
         @write ||= false
         @testing = true if Rails.env.test? && @write

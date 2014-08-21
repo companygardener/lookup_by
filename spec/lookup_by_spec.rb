@@ -1,6 +1,5 @@
-require "spec_helper"
+require "rails_helper"
 require "lookup_by"
-require "pry"
 
 describe ::ActiveRecord::Base do
   describe "macro methods" do
@@ -208,6 +207,23 @@ describe LookupBy::Lookup do
           lookup_by :raisin, find_or_create: true, raise: true
         end
       }.to raise_error(ArgumentError)
+    end
+  end
+
+  context "Unsynchronizable.lookup_by :column, cache: 1, find_or_create: true, safe: true" do
+    subject { Unsynchronizable }
+
+    it_behaves_like "a lookup"
+    it_behaves_like "a cache"
+    it_behaves_like "a read-through cache"
+    it_behaves_like "a write-through cache"
+
+    it "does not deadlock when synchronizing access" do
+      expect {
+        Unsynchronizable['foo']
+        Unsynchronizable['foo']
+        Unsynchronizable['bar']
+      }.to_not raise_error
     end
   end
 end

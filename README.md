@@ -16,36 +16,31 @@
 
 # Overview
 
-LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains and supports:
+LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
 
-* configurable column names
-* caching (read-through, write-through, least recently used (LRU))
-* symbols
+* Configurable lookup column
+* Caching (read-through, write-through, least recently used (LRU))
+* Symbolized values
+* Normalized values, _e.g. canonicalizing UTF-8 before lookup_
 
 ### Dependencies
 
-* Rails 3.2+
+* Rails 3.2+, _tested on Rails 3.2, 4.0, 4.1, and 4.2_
 * PostgreSQL
 
 ### Development
 
-[github.com/companygardener/lookup_by][development]
+* [github.com/companygardener/lookup_by][development]
 
 ### Source
 
-git clone git://github.com/companygardener/lookup_by.git
+* git clone git://github.com/companygardener/lookup_by.git
 
 ### Bug reports
 
-If you discover a problem with LookupBy, please let me know. However, I ask that you'd kindly review these guidelines before creating [Issues][]:
+Please create [Issues][] to submit bug reports and feature requests. However, I ask that you'd kindly review [these bug reporting guidelines](https://github.com/companygardener/lookup_by/wiki/Bug-Reports) first.
 
-https://github.com/companygardener/lookup_by/wiki/Bug-Reports
-
-If you find a security bug, please **_do not_** use the issue tracker. Instead, send an email to: thecompanygardener@gmail.com.
-
-Please create [Issues][issues] to submit bug reports and feature requests.
-
-_Provide a failing rspec test that concisely demonstrates the issue._
+_If you find a security bug, **_do not_** use the public issue tracker. Instead, send an email to: thecompanygardener@gmail.com._
 
 # Installation
 
@@ -211,7 +206,7 @@ lookup_by :column_name, cache: 50
 
 ### Cache miss
 
-You can enable read-throughs using the `:find` option.
+Enable cache read-throughs using the `:find` option.
 
 ```ruby
 # Return nil
@@ -229,7 +224,7 @@ lookup_by :column_name, cache: true, find: true
 
 ### DB miss
 
-You can enable write-throughs using the `:find_or_create` option.
+Enable cache write-throughs using the `:find_or_create` option.
 
 _Note: This will only work if the primary key is a sequence and all columns but the lookup column are optional._
 
@@ -246,7 +241,7 @@ lookup_by :column_name, cache: 20, find_or_create: true
 
 ### Raise on Miss
 
-You can configure cache misses to raise a `LookupBy::RecordNotFound` error.
+Configure cache misses to raise a `LookupBy::RecordNotFound` error.
 
 ```ruby
 # Return nil
@@ -259,7 +254,6 @@ lookup_by :column_name, cache: true, raise: true
 # Raise if not found in DB, either
 lookup_by :column_name, cache: true, find: true, raise: true
 ```
-
 
 ### Normalize values
 
@@ -277,6 +271,18 @@ Can be useful to handle `params` that are not required.
 # Allow blank
 #   Treat "" different than nil
 lookup_by :column_name, allow_blank: true
+```
+
+### Threadsafety
+
+Force the LRU to be threadsafe (used to test the SafeLRU).
+
+With Rails 4, the Safe LRU is selected automatically in production-like environments.
+
+```ruby
+# Safe
+#   Use threadsafe cache
+lookup_by :column_name, cache: 10, safe: true
 ```
 
 # Integration

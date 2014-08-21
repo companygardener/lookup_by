@@ -1,29 +1,42 @@
+# TODO: Evaluate using ThreadSafe::Hash and ThreadSafe::Array.
+
+require "mutex_m"
+
 module LookupBy
   module Caching
     class SafeLRU < LRU
+      include Mutex_m
+
       def initialize(maxsize = nil)
-        @mutex = Mutex.new
         super
       end
 
-      def clear
-        @mutex.synchronize { super }
-      end
-
       def [](key)
-        @mutex.synchronize { super }
+        synchronize { super }
       end
 
       def []=(key, value)
-        @mutex.synchronize { super }
-      end
-
-      def merge!(hash)
-        @mutex.synchronize { super }
+        synchronize { super }
       end
 
       def delete(key)
-        @mutex.synchronize { super }
+        synchronize { super }
+      end
+
+      def clear
+        synchronize { super }
+      end
+
+      def values
+        synchronize { super }
+      end
+
+      def size
+        synchronize { super }
+      end
+
+      def to_h
+        synchronize { super }
       end
     end
   end
