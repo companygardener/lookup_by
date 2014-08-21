@@ -16,6 +16,8 @@ class CreateTables < ActiveRecord::Migration
     create_lookup_table :raisins
     create_lookup_table :read_through_raisins
 
+    create_lookup_table :unsynchronizables
+
     enable_extension 'uuid-ossp'
 
     execute 'CREATE SCHEMA traffic;'

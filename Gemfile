@@ -10,7 +10,8 @@ group :development, :test do
 
   gem 'rspec'
   gem 'rspec-its'
-  gem 'database_cleaner'
+  gem 'rspec-rails'
+  # gem 'database_cleaner'
 
   gem "pg", platform: :ruby
   gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
