@@ -117,6 +117,21 @@ module LookupBy
     end
 
     module SchemaMethods
+      # Create a lookup table.
+      #
+      # @example
+      #   create_lookup_table :statuses, schema: "custom", small: true
+      #
+      #   create_lookup_table :companies do |t|
+      #     t.string :short_name
+      #   end
+      #
+      # @param [Symbol] name
+      # @param [Hash] options
+      # @option options [Symbol] lookup_column Name of the lookup column.
+      # @option options [Symbol] lookup_type   Type of the lookup column, _e.g. :text, :uuid, or :inet_.
+      # @option options [String] primary_key   Name of the primary key.
+      # @option options [String] schema
       def create_lookup_table(name, options = {})
         options.symbolize_keys!
 

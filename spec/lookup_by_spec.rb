@@ -14,7 +14,6 @@ describe ::ActiveRecord::Base do
 
     it { is_expected.to respond_to :name }
   end
-
 end
 
 describe LookupBy::Lookup do
