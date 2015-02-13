@@ -77,10 +77,11 @@ module LookupBy
         @lookup.cache.size
       end
 
-      def pluck(column_name)
+      def pluck(*column_names)
         return super if @lookup.read_through?
+        return super if column_names.size > 1
 
-        @lookup.cache.values.map { |o| o.send(column_name) }
+        @lookup.cache.values.map { |o| o.send(column_names.first) }
       end
 
       def [](*args)
