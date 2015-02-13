@@ -63,7 +63,7 @@ module LookupBy
     module ClassMethods
       # TODO: Rails 4 needs to return a proxy object here
       def all(*args)
-        return super if Rails::VERSION::MAJOR > 3
+        return super if Rails::VERSION::MAJOR >= 4
         return super if @lookup.read_through?
         return super if args.any?
 

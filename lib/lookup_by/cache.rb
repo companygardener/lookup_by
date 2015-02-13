@@ -132,13 +132,9 @@ module LookupBy
 
   private
 
+    # RAILS_ENV=test will not use the SafeLRU
     def concurrent?
-      case Rails::VERSION::MAJOR
-      when 4 then Rails.configuration.cache_classes && Rails.configuration.eager_load
-      when 3 then Rails.configuration.allow_concurrency
-      else
-        true
-      end
+      Rails.configuration.cache_classes && Rails.configuration.eager_load
     end
 
     def primary_key?(value)
@@ -154,26 +150,43 @@ module LookupBy
       @klass.new(@field => value).send(@field)
     end
 
-    def cache_read(value)
-      if primary_key?(value)
-        found = @cache[value]
-      else
-        found = @cache.values.detect { |o| o.send(@field) == value }
+
+    if Rails.env.production?
+      def cache_read(value)
+        if primary_key?(value)
+          @cache[value]
+        else
+          @cache.values.detect { |o| o.send(@field) == value }
+        end
       end
+    else
+      def cache_read(value)
+        if primary_key?(value)
+          found = @cache[value]
+        else
+          found = @cache.values.detect { |o| o.send(@field) == value }
+        end
 
-      increment :cache, found ? :hit : :miss
+        increment :cache, found ? :hit : :miss
 
-      found
+        found
+      end
     end
 
-    def db_read(value)
-      increment :db, :get
+    if Rails.env.production?
+      def db_read(value)
+        @klass.where(column_for(value) => value).first
+      end
+    else
+      def db_read(value)
+        increment :db, :get
 
-      found = @klass.where(column_for(value) => value).first
+        found = @klass.where(column_for(value) => value).first
 
-      increment :db, found ? :hit : :miss
+        increment :db, found ? :hit : :miss
 
-      found
+        found
+      end
     end
 
     def db_write(value)
