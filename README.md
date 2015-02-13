@@ -98,6 +98,9 @@ class Status < ActiveRecord::Base
   lookup_by :status
 end
 
+# Seed some values
+Status.seed *%w[unpaid paid shipped]
+
 # Aliases :name to the lookup attribute
 Status.new(name: "paid")
 ```
@@ -239,7 +242,7 @@ lookup_by :column_name
 lookup_by :column_name, cache: 20, find_or_create: true
 ```
 
-### Raise on Miss
+### Raise on miss
 
 Configure cache misses to raise a `LookupBy::RecordNotFound` error.
 

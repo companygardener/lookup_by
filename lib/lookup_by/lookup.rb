@@ -101,6 +101,12 @@ module LookupBy
         else return args.map { |arg| self[arg] } 
         end
       end
+
+      def seed(*args)
+        super if defined?(super)
+
+        @lookup.seed *args
+      end
     end
 
     module InstanceMethods

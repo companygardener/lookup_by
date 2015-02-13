@@ -16,18 +16,36 @@ describe ::ActiveRecord::Base do
   end
 end
 
-describe LookupBy::Lookup do
-  describe "cache" do
-    it "seeds values" do
-      City.lookup.seed 'Boston'
-      City.lookup.seed 'Chicago', 'New York City'
+describe LookupBy::Lookup::ClassMethods do
+  describe "#seed" do
+    it "accepts multiple values" do
+      City.seed 'Boston'
+      City.seed 'Chicago', 'New York City'
 
-      names = City.all.map(&:name).sort
-      expect(names.sort).to eq(['Boston', 'Chicago', 'New York City'])
+      expect(City.pluck(:city).sort).to eq(['Boston', 'Chicago', 'New York City'])
+      City.lookup.clear
+    end
+
+    it "accepts duplicates" do
+      expect { City.seed 'Chicago', 'Chicago' }.not_to raise_error
+
+      if Rails::VERSION::MAJOR == 4 && Rails::VERSION::MINOR == 0
+        expect(City.pluck(:city)).to eq(['Chicago'])
+      else
+        expect(City.pluck(:name)).to eq(['Chicago'])
+      end
+
+      City.lookup.clear
+    end
+
+    it "returns objects" do
+      expect(City.seed 'Chicago').to eq(City.all)
       City.lookup.clear
     end
   end
+end
 
+describe LookupBy::Lookup do
   context "Uncacheable.lookup_by :column, cache: true, find_or_create: true" do
     it "fails when trying to cache and write-through" do
       expect { Uncacheable }.to raise_error

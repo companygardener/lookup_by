@@ -77,7 +77,7 @@ module LookupBy
 
     def seed(*values)
       @klass.transaction(requires_new: true) do
-        values.each { |value| create!(@field => value) }
+        values.map { |value| @klass.where(@field => value).first_or_create! }
       end
     end
 
