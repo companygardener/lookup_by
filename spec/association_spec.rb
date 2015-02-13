@@ -192,3 +192,18 @@ describe LookupBy::Association, 'scopes' do
     end
   end
 end
+
+context 'validation' do
+  subject { Account.new(phone_number: "invalid") }
+
+  # it { is_expected.to have(2).errors_on(:phone_number) }
+  # it { expect(subject).to have(2).errors_on(:phone_number) }
+
+  # it 'bubbles errors' do
+  #   expect(subject).to have(2).errors_on(:phone_number)
+  # end
+
+  it 'bubbles errors' do
+    expect(subject.errors[:phone_number].size).to eq(2)
+  end
+end

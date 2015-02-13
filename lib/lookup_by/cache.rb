@@ -195,7 +195,7 @@ module LookupBy
       return if column == @primary_key
 
       @klass.transaction(requires_new: true) do
-        @klass.create!(column => value)
+        @klass.create(column => value)
       end
     rescue ActiveRecord::RecordNotUnique
       db_read(value)
