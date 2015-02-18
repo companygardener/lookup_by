@@ -132,12 +132,12 @@ module LookupBy
               raise TypeError, "#{foreign_key}=(arg): arg must be a String, Symbol, Integer, IPAddr, nil, or #{class_name}"
             end
 
-            #{%Q(raise LookupBy::Error, "\#{arg.inspect} is not in the <#{class_name}> lookup cache" if arg.present? && result.nil?) if strict}
+            #{ %Q(raise LookupBy::Error, "\#{arg.inspect} is not in the <#{class_name}> lookup cache" if arg.present? && result.nil?) if strict }
 
-            return unless result
-
-            if result.persisted?
-              self.#{foreign_key} = result.try(:id)
+            if result.blank?
+              self.#{foreign_key} = nil
+            elsif result.persisted?
+              self.#{foreign_key} = result.id
             elsif lookup_errors = result.errors[:#{lookup_field}]
               lookup_errors.each do |msg|
                 errors.add :#{field}, msg
