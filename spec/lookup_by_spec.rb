@@ -26,17 +26,9 @@ describe LookupBy do
     end
   end
 
-  describe ".disable" do
-    it "disables all lookups" do
+  describe ".disable and .enable" do
+    it "affects all lookups" do
       expect(City.lookup.enabled?).to eq(true)
-      LookupBy.disable
-      expect(City.lookup.enabled?).to eq(false)
-      LookupBy.enable
-    end
-  end
-
-  describe ".enable" do
-    it "enables all lookups" do
       LookupBy.disable
       expect(City.lookup.enabled?).to eq(false)
       LookupBy.enable
