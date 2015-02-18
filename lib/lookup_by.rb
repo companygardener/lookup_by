@@ -39,11 +39,11 @@ module LookupBy
     end
 
     def disable
-      lookups.each { |lookup| lookup.disable }
+      lookups.each { |lookup| lookup.disable! }
     end
 
     def enable
-      lookups.each { |lookup| lookup.enable }
+      lookups.each { |lookup| lookup.enable! }
     end
 
     def reload
