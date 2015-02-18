@@ -6,7 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem 'appraisal', '~> 1.0', require: false
+  gem 'appraisal', '~> 1.0.0', require: false
 
   gem 'rspec'
   gem 'rspec-its'
