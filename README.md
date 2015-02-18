@@ -64,12 +64,16 @@ Or install it manually:
 LookupBy adds two "macro" methods to `ActiveRecord::Base`
 
 ```ruby
-lookup_by :column_name
-# Defines .[], .lookup, and .is_a_lookup? class methods.
-
-lookup_for :status
-# Defines #status and #status= instance methods that transparently reference the lookup table.
-# Defines .with_status(*names) and .without_status(*names) scopes on the model.
+class ExampleLookup < ActiveRecord::Base
+  lookup_by :column_name
+  # Defines .[], .lookup, .is_a_lookup?, and .seed class methods.
+end
+  
+class ExampleObject < ActiveRecord::Base
+  lookup_for :status
+  # Defines #status and #status= instance methods that transparently reference the lookup table.
+  # Defines .with_status(*names) and .without_status(*names) scopes on the model.
+end
 ```
 
 ### Define the lookup model
@@ -141,6 +145,29 @@ order.status_before_type_cast
 # Look ma', no strings!
 Order.column_names
 => ["order_id", "status_id"]
+```
+
+### Seed the lookup table
+
+```ruby
+# Find or create each argument
+Status.seed *%w[unpaid paid shipped returned]
+```
+
+### Manage lookups globally
+
+```ruby
+# Clear all caches
+LookupBy.clear
+
+# Disable all
+LookupBy.disable
+
+# Enable all, this will reload the caches
+LookupBy.enable
+
+# Reload all caches
+LookupBy.reload
 ```
 
 # Configuration
