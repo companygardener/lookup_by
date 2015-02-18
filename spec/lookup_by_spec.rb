@@ -1,12 +1,55 @@
 require "rails_helper"
 require "lookup_by"
 
+describe LookupBy do
+  describe ".register" do
+    it "adds its argument to .lookups" do
+      LookupBy.register(Array)
+      expect(LookupBy.lookups).to include(Array)
+      LookupBy.lookups.delete(Array)
+    end
+
+    it "doesn't register classes twice" do
+      LookupBy.register(Array)
+      LookupBy.register(Array)
+
+      expect(LookupBy.lookups.select { |l| l == Array }.size).to eq(1)
+
+      LookupBy.lookups.delete(Array)
+    end
+  end
+
+  describe ".clear" do
+    it "clears all lookup caches" do
+      Path["/will-be-cleared"]
+      binding.pry
+    end
+  end
+
+  describe ".disable" do
+  end
+
+  describe ".enable" do
+  end
+end
+
 describe ::ActiveRecord::Base do
   describe "macro methods" do
     subject { described_class }
 
     it { is_expected.to respond_to :lookup_by    }
     it { is_expected.to respond_to :is_a_lookup? }
+  end
+
+  describe ".lookup_by" do
+    class CityTest < ActiveRecord::Base
+      self.table_name = "cities"
+      lookup_by :city
+    end
+
+    it "registers lookup models" do
+      expect(LookupBy.lookups).to include(CityTest)
+    end
   end
 
   describe "instance methods" do

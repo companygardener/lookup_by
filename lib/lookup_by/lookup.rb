@@ -31,6 +31,8 @@ module LookupBy
         options.symbolize_keys!
         options.assert_valid_keys :allow_blank, :order, :cache, :normalize, :find, :find_or_create, :raise, :safe
 
+        LookupBy.register self
+
         raise "#{self} already called lookup_by" if is_a? Lookup::ClassMethods
         raise "#{self} responds_to :[], needed for lookup_by"     if respond_to? :[]
         raise "#{self} responds_to :lookup, needed for lookup_by" if respond_to? :lookup
