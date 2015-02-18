@@ -25,7 +25,8 @@ LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces norma
 
 ### Dependencies
 
-* Rails 3.2+, _tested on Rails 3.2, 4.0, 4.1, and 4.2_
+* Rails 4.0+, _tested on Rails 4.0, 4.1, and 4.2_
+* Ruby 1.9.3+, _tested on Ruby 1.9.3, 2.0, 2.1, 2.2 and Rubinius 1.5.2_
 * PostgreSQL
 
 ### Development
