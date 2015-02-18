@@ -351,7 +351,7 @@ ALTER SEQUENCE read_through_raisins_read_through_raisin_id_seq OWNED BY read_thr
 --
 
 CREATE TABLE schema_migrations (
-    version character varying NOT NULL
+    version character varying(255) NOT NULL
 );
 
 

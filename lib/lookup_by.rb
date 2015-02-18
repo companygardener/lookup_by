@@ -4,8 +4,8 @@ require "lookup_by/railtie" if defined? Rails
 module LookupBy
   class Error < StandardError; end
 
-  mattr_accessor :lookups
-  self.lookups = []
+  mattr_accessor :classes
+  self.classes = []
 
   mattr_accessor :mutex
   self.mutex = Mutex.new
@@ -26,20 +26,28 @@ module LookupBy
   class << self
     def register(klass)
       mutex.synchronize do
-        self.lookups << klass unless lookups.include?(klass)
+        self.classes << klass unless classes.include?(klass)
       end
     end
 
+    def lookups
+      classes.map { |klass| klass.lookup }
+    end
+
     def clear
-      lookups.each { |klass| klass.send(:lookup).clear }
+      lookups.each { |lookup| lookup.clear }
     end
 
     def disable
-      lookups.each { |klass| klass.send(:lookup).disable }
+      lookups.each { |lookup| lookup.disable }
     end
 
     def enable
-      lookups.each { |klass| klass.send(:lookup).enable }
+      lookups.each { |lookup| lookup.enable }
+    end
+
+    def reload
+      lookups.each { |lookup| lookup.reload }
     end
   end
 end

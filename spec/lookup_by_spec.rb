@@ -5,24 +5,24 @@ describe LookupBy do
   describe ".register" do
     it "adds its argument to .lookups" do
       LookupBy.register(Array)
-      expect(LookupBy.lookups).to include(Array)
-      LookupBy.lookups.delete(Array)
+      expect(LookupBy.classes).to include(Array)
+      LookupBy.classes.delete(Array)
     end
 
     it "doesn't register classes twice" do
       LookupBy.register(Array)
       LookupBy.register(Array)
 
-      expect(LookupBy.lookups.select { |l| l == Array }.size).to eq(1)
+      expect(LookupBy.classes.select { |l| l == Array }.size).to eq(1)
 
-      LookupBy.lookups.delete(Array)
+      LookupBy.classes.delete(Array)
     end
   end
 
   describe ".clear" do
     it "clears all lookup caches" do
-      Path["/will-be-cleared"]
-      binding.pry
+      Path.lookup.cache[1] = "remove-this"
+      expect { LookupBy.clear }.to change { Path.lookup.cache.size }
     end
   end
 
@@ -48,7 +48,7 @@ describe ::ActiveRecord::Base do
     end
 
     it "registers lookup models" do
-      expect(LookupBy.lookups).to include(CityTest)
+      expect(LookupBy.classes).to include(CityTest)
     end
   end
 
@@ -66,7 +66,6 @@ describe LookupBy::Lookup::ClassMethods do
       City.seed 'Chicago', 'New York City'
 
       expect(City.pluck(:city).sort).to eq(['Boston', 'Chicago', 'New York City'])
-      City.lookup.clear
     end
 
     it "accepts duplicates" do
@@ -77,13 +76,10 @@ describe LookupBy::Lookup::ClassMethods do
       else
         expect(City.pluck(:name)).to eq(['Chicago'])
       end
-
-      City.lookup.clear
     end
 
     it "returns objects" do
       expect(City.seed 'Chicago').to eq(City.all)
-      City.lookup.clear
     end
   end
 end
@@ -143,7 +139,12 @@ describe LookupBy::Lookup do
     it_behaves_like "a strict cache"
 
     it "preloads the cache" do
-      expect(subject.lookup.cache).not_to be_empty
+      class StateTest < ActiveRecord::Base
+        self.table_name = "states"
+        lookup_by :state, cache: true
+      end
+
+      expect(StateTest.lookup.cache).not_to be_empty
     end
   end
 
