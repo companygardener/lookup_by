@@ -25,7 +25,8 @@ LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces norma
 
 ### Dependencies
 
-* Rails 3.2+, _tested on Rails 3.2, 4.0, 4.1, and 4.2_
+* Rails 4.0+, _tested on Rails 4.0, 4.1, and 4.2_
+* Ruby 1.9.3+, _tested on Ruby 1.9.3, 2.0, 2.1, 2.2 and Rubinius 1.5.2_
 * PostgreSQL
 
 ### Development
@@ -64,12 +65,16 @@ Or install it manually:
 LookupBy adds two "macro" methods to `ActiveRecord::Base`
 
 ```ruby
-lookup_by :column_name
-# Defines .[], .lookup, and .is_a_lookup? class methods.
-
-lookup_for :status
-# Defines #status and #status= instance methods that transparently reference the lookup table.
-# Defines .with_status(*names) and .without_status(*names) scopes on the model.
+class ExampleLookup < ActiveRecord::Base
+  lookup_by :column_name
+  # Defines .[], .lookup, .is_a_lookup?, and .seed class methods.
+end
+  
+class ExampleObject < ActiveRecord::Base
+  lookup_for :status
+  # Defines #status and #status= instance methods that transparently reference the lookup table.
+  # Defines .with_status(*names) and .without_status(*names) scopes on the model.
+end
 ```
 
 ### Define the lookup model
@@ -97,6 +102,9 @@ create_lookup_table :statuses
 class Status < ActiveRecord::Base
   lookup_by :status
 end
+
+# Seed some values
+Status.seed *%w[unpaid paid shipped]
 
 # Aliases :name to the lookup attribute
 Status.new(name: "paid")
@@ -138,6 +146,29 @@ order.status_before_type_cast
 # Look ma', no strings!
 Order.column_names
 => ["order_id", "status_id"]
+```
+
+### Seed the lookup table
+
+```ruby
+# Find or create each argument
+Status.seed *%w[unpaid paid shipped returned]
+```
+
+### Manage lookups globally
+
+```ruby
+# Clear all caches
+LookupBy.clear
+
+# Disable all
+LookupBy.disable
+
+# Enable all, this will reload the caches
+LookupBy.enable
+
+# Reload all caches
+LookupBy.reload
 ```
 
 # Configuration
@@ -239,7 +270,7 @@ lookup_by :column_name
 lookup_by :column_name, cache: 20, find_or_create: true
 ```
 
-### Raise on Miss
+### Raise on miss
 
 Configure cache misses to raise a `LookupBy::RecordNotFound` error.
 

@@ -32,8 +32,8 @@ module LookupBy
         options.assert_valid_keys :allow_blank, :order, :cache, :normalize, :find, :find_or_create, :raise, :safe
 
         raise "#{self} already called lookup_by" if is_a? Lookup::ClassMethods
-        raise "#{self} responds_to :[], needed for lookup_by"     if respond_to? :[]
-        raise "#{self} responds_to :lookup, needed for lookup_by" if respond_to? :lookup
+        raise "#{self} responds_to .[], needed for lookup_by"     if respond_to? :[]
+        raise "#{self} responds_to .lookup, needed for lookup_by" if respond_to? :lookup
 
         extend ClassMethods
 
@@ -57,13 +57,15 @@ module LookupBy
           @lookup = Cache.new(self, options.merge(field: field))
           @lookup.reload
         end
+
+        LookupBy.register self
       end
     end
 
     module ClassMethods
       # TODO: Rails 4 needs to return a proxy object here
       def all(*args)
-        return super if Rails::VERSION::MAJOR > 3
+        return super if Rails::VERSION::MAJOR >= 4
         return super if @lookup.read_through?
         return super if args.any?
 
@@ -77,10 +79,11 @@ module LookupBy
         @lookup.cache.size
       end
 
-      def pluck(column_name)
+      def pluck(*column_names)
         return super if @lookup.read_through?
+        return super if column_names.size > 1
 
-        @lookup.cache.values.map { |o| o.send(column_name) }
+        @lookup.cache.values.map { |o| o.send(column_names.first) }
       end
 
       def [](*args)
@@ -100,6 +103,12 @@ module LookupBy
         else return args.map { |arg| self[arg] } 
         end
       end
+
+      def seed(*args)
+        super if defined?(super)
+
+        @lookup.seed *args
+      end
     end
 
     module InstanceMethods
@@ -116,6 +125,21 @@ module LookupBy
     end
 
     module SchemaMethods
+      # Create a lookup table.
+      #
+      # @example
+      #   create_lookup_table :statuses, schema: "custom", small: true
+      #
+      #   create_lookup_table :companies do |t|
+      #     t.string :short_name
+      #   end
+      #
+      # @param [Symbol] name
+      # @param [Hash] options
+      # @option options [Symbol] lookup_column Name of the lookup column.
+      # @option options [Symbol] lookup_type   Type of the lookup column, _e.g. :text, :uuid, or :inet_.
+      # @option options [String] primary_key   Name of the primary key.
+      # @option options [String] schema
       def create_lookup_table(name, options = {})
         options.symbolize_keys!
 

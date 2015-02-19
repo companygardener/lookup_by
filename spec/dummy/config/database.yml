@@ -42,11 +42,3 @@ test:
   adapter: postgresql
   database: lookup_by_test
   username: postgres
-
-production:
-  adapter: postgresql
-  encoding: unicode
-  database: dummy_production
-  pool: 5
-  username: dummy
-  password:

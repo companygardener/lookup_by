@@ -204,7 +204,7 @@ shared_examples "a lookup for" do |field|
   end
 
   it "converts empty strings to nil" do
-    subject.send "#{field}=",  ""
+    subject.send "#{field}=", ""
     expect(subject.send(field)).to be_nil
   end
 

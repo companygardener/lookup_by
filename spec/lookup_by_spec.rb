@@ -1,6 +1,42 @@
 require "rails_helper"
 require "lookup_by"
 
+describe LookupBy do
+  describe ".register" do
+    it "adds its argument to .lookups" do
+      LookupBy.register(Array)
+      expect(LookupBy.classes).to include(Array)
+      LookupBy.classes.delete(Array)
+    end
+
+    it "doesn't register classes twice" do
+      LookupBy.register(Array)
+      LookupBy.register(Array)
+
+      expect(LookupBy.classes.select { |l| l == Array }.size).to eq(1)
+
+      LookupBy.classes.delete(Array)
+    end
+  end
+
+  describe ".clear" do
+    it "clears all lookup caches" do
+      Path.lookup.cache[1] = "remove-this"
+      expect { LookupBy.clear }.to change { Path.lookup.cache.size }
+    end
+  end
+
+  describe ".disable and .enable" do
+    it "affects all lookups" do
+      expect(City.lookup.enabled?).to eq(true)
+      LookupBy.disable
+      expect(City.lookup.enabled?).to eq(false)
+      LookupBy.enable
+      expect(City.lookup.enabled?).to eq(true)
+    end
+  end
+end
+
 describe ::ActiveRecord::Base do
   describe "macro methods" do
     subject { described_class }
@@ -9,26 +45,50 @@ describe ::ActiveRecord::Base do
     it { is_expected.to respond_to :is_a_lookup? }
   end
 
+  describe ".lookup_by" do
+    class CityTest < ActiveRecord::Base
+      self.table_name = "cities"
+      lookup_by :city
+    end
+
+    it "registers lookup models" do
+      expect(LookupBy.classes).to include(CityTest)
+    end
+  end
+
   describe "instance methods" do
     subject { Status.new }
 
     it { is_expected.to respond_to :name }
   end
+end
 
+describe LookupBy::Lookup::ClassMethods do
+  describe "#seed" do
+    it "accepts multiple values" do
+      City.seed 'Boston'
+      City.seed 'Chicago', 'New York City'
+
+      expect(City.pluck(:city).sort).to eq(['Boston', 'Chicago', 'New York City'])
+    end
+
+    it "accepts duplicates" do
+      expect { City.seed 'Chicago', 'Chicago' }.not_to raise_error
+
+      if Rails::VERSION::MAJOR == 4 && Rails::VERSION::MINOR == 0
+        expect(City.pluck(:city)).to eq(['Chicago'])
+      else
+        expect(City.pluck(:name)).to eq(['Chicago'])
+      end
+    end
+
+    it "returns objects" do
+      expect(City.seed 'Chicago').to eq(City.all)
+    end
+  end
 end
 
 describe LookupBy::Lookup do
-  describe "cache" do
-    it "seeds values" do
-      City.lookup.seed 'Boston'
-      City.lookup.seed 'Chicago', 'New York City'
-
-      names = City.all.map(&:name).sort
-      expect(names.sort).to eq(['Boston', 'Chicago', 'New York City'])
-      City.lookup.clear
-    end
-  end
-
   context "Uncacheable.lookup_by :column, cache: true, find_or_create: true" do
     it "fails when trying to cache and write-through" do
       expect { Uncacheable }.to raise_error
@@ -83,7 +143,12 @@ describe LookupBy::Lookup do
     it_behaves_like "a strict cache"
 
     it "preloads the cache" do
-      expect(subject.lookup.cache).not_to be_empty
+      class StateTest < ActiveRecord::Base
+        self.table_name = "states"
+        lookup_by :state, cache: true
+      end
+
+      expect(StateTest.lookup.cache).not_to be_empty
     end
   end
 

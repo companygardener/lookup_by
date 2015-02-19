@@ -62,12 +62,12 @@ describe LookupBy::Association do
     it_behaves_like "a lookup for", :city
 
     it "accepts Integers" do
-      subject.city = City.where(city: "New York").first.id
+      subject.city = City["New York"].id
       expect(subject.city).to eq "New York"
     end
 
     it "rejects symbols" do
-      expect { subject.city = :'New York' }.to raise_error ArgumentError
+      expect { subject.city = :invalid }.to raise_error ArgumentError
     end
 
     it "returns strings" do
@@ -100,6 +100,8 @@ describe LookupBy::Association do
   end
 
   context "Address.lookup_for :street" do
+    it_behaves_like "a lookup for", :street
+
     it "accepts write-through values" do
       expect { subject.street = "Dearborn Street" }.to change(Street, :count)
     end
@@ -190,5 +192,20 @@ describe LookupBy::Association, 'scopes' do
       scope = klass.outside_city('Chicago', 'Madison')
       expect(scope.to_sql).to eq klass.where('city_id NOT IN (?)', [chicago.id, madison.id]).to_sql
     end
+  end
+end
+
+context 'validation' do
+  subject { Account.new(phone_number: "invalid") }
+
+  # it { is_expected.to have(2).errors_on(:phone_number) }
+  # it { expect(subject).to have(2).errors_on(:phone_number) }
+
+  # it 'bubbles errors' do
+  #   expect(subject).to have(2).errors_on(:phone_number)
+  # end
+
+  it 'bubbles errors' do
+    expect(subject.errors[:phone_number].size).to eq(2)
   end
 end

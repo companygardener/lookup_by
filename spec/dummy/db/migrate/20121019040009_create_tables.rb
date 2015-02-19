@@ -5,10 +5,12 @@ class CreateTables < ActiveRecord::Migration
     create_lookup_table :user_agents
     create_lookup_table :email_addresses
 
-    create_lookup_table :accounts
+
     create_lookup_table :statuses, small: true
 
     create_lookup_table :ip_addresses, lookup_type: :inet
+
+    create_lookup_table :phone_numbers
 
     create_lookup_table :uncacheables
     create_lookup_table :unfindables
@@ -24,7 +26,11 @@ class CreateTables < ActiveRecord::Migration
 
     create_lookup_table :paths, schema: 'traffic', id: :uuid
 
-    create_table :addresses, primary_key: "address_id" do |t|
+    create_lookup_table :accounts do |t|
+      t.belongs_to :phone_number
+    end
+
+    create_lookup_table :addresses do |t|
       t.belongs_to :city
       t.belongs_to :state
       t.belongs_to :postal_code

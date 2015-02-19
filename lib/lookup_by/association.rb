@@ -13,6 +13,7 @@
 module LookupBy
   module Association
     module MacroMethods
+      # @see https://practicingruby.com/articles/closures-are-complicated
       def lookup_for field, options = {}
         begin
           return unless table_exists?
@@ -116,24 +117,32 @@ module LookupBy
           end
 
           def #{field}=(arg)
-            value = case arg
+            result = case arg
             when nil
               nil
             when String, Integer, IPAddr
-              #{class_name}[arg].try(:id)
+              #{class_name}[arg]
             when Symbol
               #{%Q(raise ArgumentError, "#{foreign_key}=(Symbol): use `lookup_for :column, symbolize: true` to allow symbols") unless options[:symbolize]}
-              #{class_name}[arg].try(:id)
+              #{class_name}[arg]
             when #{class_name}
-              raise ArgumentError, "self.#{foreign_key}=(#{class_name}): must be saved" unless arg.id
-              arg.id
+              raise ArgumentError, "self.#{foreign_key}=(#{class_name}): must be saved" unless arg.persisted?
+              arg
             else
               raise TypeError, "#{foreign_key}=(arg): arg must be a String, Symbol, Integer, IPAddr, nil, or #{class_name}"
             end
 
-            #{%Q(raise LookupBy::Error, "\#{arg.inspect} is not in the <#{class_name}> lookup cache" if arg.present? && value.nil?) if strict}
+            #{ %Q(raise LookupBy::Error, "\#{arg.inspect} is not in the <#{class_name}> lookup cache" if arg.present? && result.nil?) if strict }
 
-            self.#{foreign_key} = value
+            if result.blank?
+              self.#{foreign_key} = nil
+            elsif result.persisted?
+              self.#{foreign_key} = result.id
+            elsif lookup_errors = result.errors[:#{lookup_field}]
+              lookup_errors.each do |msg|
+                errors.add :#{field}, msg
+              end
+            end
           end
         METHODS
       end

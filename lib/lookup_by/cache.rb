@@ -9,6 +9,7 @@ module LookupBy
       @primary_key_type = klass.columns_hash[@primary_key].type
       @field            = options[:field].to_sym
       @cache            = {}
+      @reverse          = {}
       @order            = options[:order] || @field
       @read             = options[:find_or_create] || options[:find]
       @write            = options[:find_or_create]
@@ -18,11 +19,13 @@ module LookupBy
       @testing          = false
       @enabled          = true
       @safe             = options[:safe] || concurrent?
+      @mutex            = Mutex.new if @safe
 
       @stats            = { db: Hash.new(0), cache: Hash.new(0) }
 
       raise ArgumentError, %Q(unknown attribute "#{@field}" for <#{klass}>) unless klass.column_names.include?(@field.to_s)
 
+      # Order matters here, some instance variables depend on prior assignments.
       case options[:cache]
       when true
         @type    = :all
@@ -35,6 +38,7 @@ module LookupBy
         @type    = :lru
         @limit   = options[:cache]
         @cache   = @safe ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
+        @reverse = @safe ? Caching::SafeLRU.new(@limit) : Caching::LRU.new(@limit)
         @read    = true
         @write ||= false
         @testing = true if Rails.env.test? && @write
@@ -53,8 +57,8 @@ module LookupBy
       clear
 
       ::ActiveRecord::Base.connection.send :log, "", "#{@klass.name} Load Cache All" do
-        @klass.order(@order).each do |i|
-          @cache[i.id] = i
+        @klass.order(@order).each do |object|
+          cache_write(object)
         end
       end
     end
@@ -65,19 +69,23 @@ module LookupBy
 
     def create(*args, &block)
       created = @klass.create(*args, &block)
-      @cache[created.id] = created if created && cache?
+
+      cache_write(created) if cache?
+
       created
     end
 
     def create!(*args, &block)
       created = @klass.create!(*args, &block)
-      @cache[created.id] = created if cache?
+
+      cache_write(created) if cache?
+
       created
     end
 
     def seed(*values)
       @klass.transaction(requires_new: true) do
-        values.each { |value| create!(@field => value) }
+        values.map { |value| @klass.where(@field => value).first_or_create! }
       end
     end
 
@@ -89,7 +97,7 @@ module LookupBy
       found = cache_read(value) if cache?
       found ||= db_read(value)  if @read || !@enabled
 
-      @cache[found.id] = found  if found && cache?
+      cache_write(found) if cache?
 
       found ||= db_write(value) if @write
 
@@ -132,13 +140,9 @@ module LookupBy
 
   private
 
+    # RAILS_ENV=test will not use the SafeLRU
     def concurrent?
-      case Rails::VERSION::MAJOR
-      when 4 then Rails.configuration.cache_classes && Rails.configuration.eager_load
-      when 3 then Rails.configuration.allow_concurrency
-      else
-        true
-      end
+      Rails.configuration.cache_classes && Rails.configuration.eager_load
     end
 
     def primary_key?(value)
@@ -154,26 +158,61 @@ module LookupBy
       @klass.new(@field => value).send(@field)
     end
 
-    def cache_read(value)
-      if primary_key?(value)
-        found = @cache[value]
-      else
-        found = @cache.values.detect { |o| o.send(@field) == value }
+
+    if Rails.env.production?
+      def cache_read(value)
+        if primary_key?(value)
+          @cache[value]
+        else
+          @reverse[value]
+        end
       end
+    else
+      def cache_read(value)
+        found = if primary_key?(value)
+          @cache[value]
+        else
+          @reverse[value]
+        end
 
-      increment :cache, found ? :hit : :miss
+        increment :cache, found ? :hit : :miss
 
-      found
+        found
+      end
     end
 
-    def db_read(value)
-      increment :db, :get
+    if Rails.env.production?
+      def db_read(value)
+        @klass.where(column_for(value) => value).first
+      end
+    else
+      def db_read(value)
+        increment :db, :get
 
-      found = @klass.where(column_for(value) => value).first
+        found = @klass.where(column_for(value) => value).first
 
-      increment :db, found ? :hit : :miss
+        increment :db, found ? :hit : :miss
 
-      found
+        found
+      end
+    end
+
+    if @safe
+      def cache_write(object)
+        return unless object
+
+        @mutex.synchronize do
+          @cache[object.id] = object
+          @reverse[object.send(@field)] = object
+        end
+      end
+    else
+      def cache_write(object)
+        return unless object
+
+        @cache[object.id] = object
+        @reverse[object.send(@field)] = object
+      end
     end
 
     def db_write(value)
@@ -182,7 +221,7 @@ module LookupBy
       return if column == @primary_key
 
       @klass.transaction(requires_new: true) do
-        @klass.create!(column => value)
+        @klass.create(column => value)
       end
     rescue ActiveRecord::RecordNotUnique
       db_read(value)

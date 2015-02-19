@@ -56,7 +56,8 @@ SET default_with_oids = false;
 
 CREATE TABLE accounts (
     account_id integer NOT NULL,
-    account text NOT NULL
+    account text NOT NULL,
+    phone_number_id integer
 );
 
 
@@ -85,6 +86,7 @@ ALTER SEQUENCE accounts_account_id_seq OWNED BY accounts.account_id;
 
 CREATE TABLE addresses (
     address_id integer NOT NULL,
+    address text NOT NULL,
     city_id integer,
     state_id integer,
     postal_code_id integer,
@@ -226,6 +228,35 @@ CREATE SEQUENCE ip_addresses_ip_address_id_seq
 --
 
 ALTER SEQUENCE ip_addresses_ip_address_id_seq OWNED BY ip_addresses.ip_address_id;
+
+
+--
+-- Name: phone_numbers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE phone_numbers (
+    phone_number_id integer NOT NULL,
+    phone_number text NOT NULL
+);
+
+
+--
+-- Name: phone_numbers_phone_number_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE phone_numbers_phone_number_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: phone_numbers_phone_number_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE phone_numbers_phone_number_id_seq OWNED BY phone_numbers.phone_number_id;
 
 
 --
@@ -584,6 +615,13 @@ ALTER TABLE ONLY ip_addresses ALTER COLUMN ip_address_id SET DEFAULT nextval('ip
 
 
 --
+-- Name: phone_number_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY phone_numbers ALTER COLUMN phone_number_id SET DEFAULT nextval('phone_numbers_phone_number_id_seq'::regclass);
+
+
+--
 -- Name: postal_code_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -702,6 +740,14 @@ ALTER TABLE ONLY ip_addresses
 
 
 --
+-- Name: phone_numbers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY phone_numbers
+    ADD CONSTRAINT phone_numbers_pkey PRIMARY KEY (phone_number_id);
+
+
+--
 -- Name: postal_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -801,6 +847,13 @@ CREATE UNIQUE INDEX accounts__u_account ON accounts USING btree (account);
 
 
 --
+-- Name: addresses__u_address; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX addresses__u_address ON addresses USING btree (address);
+
+
+--
 -- Name: cities__u_city; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -826,6 +879,13 @@ CREATE UNIQUE INDEX email_addresses__u_email_address ON email_addresses USING bt
 --
 
 CREATE UNIQUE INDEX ip_addresses__u_ip_address ON ip_addresses USING btree (ip_address);
+
+
+--
+-- Name: phone_numbers__u_phone_number; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX phone_numbers__u_phone_number ON phone_numbers USING btree (phone_number);
 
 
 --
