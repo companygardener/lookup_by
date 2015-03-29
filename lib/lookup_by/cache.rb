@@ -202,16 +202,14 @@ module LookupBy
         return unless object
 
         @mutex.synchronize do
-          @cache[object.id] = object
-          @reverse[object.send(@field)] = object
+          @reverse[object.send(@field)] = @cache[object.id] = object
         end
       end
     else
       def cache_write(object)
         return unless object
 
-        @cache[object.id] = object
-        @reverse[object.send(@field)] = object
+        @reverse[object.send(@field)] = @cache[object.id] = object
       end
     end
 
