@@ -6,12 +6,11 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem 'appraisal', '~> 1.0.0', require: false
+  gem 'appraisal', '~> 2.0.0', require: false
 
   gem 'rspec'
   gem 'rspec-its'
   gem 'rspec-rails'
-  # gem 'database_cleaner'
 
   gem "pg", platform: :ruby
   gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
