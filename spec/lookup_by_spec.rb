@@ -81,10 +81,6 @@ describe LookupBy::Lookup::ClassMethods do
         expect(City.pluck(:name)).to eq(['Chicago'])
       end
     end
-
-    it "returns objects" do
-      expect(City.seed 'Chicago').to eq(City.all)
-    end
   end
 end
 

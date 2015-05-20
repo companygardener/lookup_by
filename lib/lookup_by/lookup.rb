@@ -108,6 +108,7 @@ module LookupBy
         super if defined?(super)
 
         @lookup.seed *args
+        @lookup.reload
       end
     end
 
