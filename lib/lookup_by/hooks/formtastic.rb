@@ -15,7 +15,7 @@ module LookupBy
         if klass.respond_to?(:lookups) && klass.lookups.include?(method.to_sym)
           target = method.to_s.classify.constantize
 
-          options[:collection] ||= target.pluck(target.lookup.field) if target.lookup.cache_all?
+          options[:collection] ||= target.pluck(target.lookup.field) if target.lookup.has_cache?
         end
 
         input_without_lookup(method, options)
