@@ -221,7 +221,7 @@ module LookupBy
       @klass.transaction(requires_new: true) do
         @klass.create(column => value)
       end
-    rescue ActiveRecord::RecordNotUnique
+    rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
       db_read(value)
     end
 
