@@ -98,7 +98,7 @@ module LookupBy
           when Symbol  then @lookup.fetch(arg.to_s)
           when IPAddr  then @lookup.fetch(arg.to_s)
           when self    then arg
-          else raise TypeError, "#{name}[arg]: arg must be at least one String, Symbol, Integer, nil, or #{name}"
+          else raise TypeError, "#{name}[*args]: args must be at least one String, Symbol, Integer, IPAddr, nil, or #{name}"
           end
         else return args.map { |arg| self[arg] } 
         end

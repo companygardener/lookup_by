@@ -209,12 +209,30 @@ describe LookupBy::Lookup do
   context "IpAddress.lookup_by :column, cache: N, find_or_create: true" do
     subject { IpAddress }
 
-    it "allows lookup by IPAddr" do
-      ip = subject['127.0.0.1']
+    let(:value) { '127.0.0.1' }
+    let(:ip)    { subject[value] }
 
-      expect(subject[IPAddr.new('127.0.0.1')]).to eq(ip)
+    it "allows lookup by IPAddr" do
+      expect(subject[IPAddr.new(value)]).to eq(ip)
+      expect(subject[ip]).to eq(ip)
       expect(subject[ip.id]).to eq(ip)
-      expect(subject['127.0.0.1']).to eq(ip)
+      expect(subject[value]).to eq(ip)
+    end
+
+    it 'caches values' do
+      subject.lookup.testing = false
+
+      subject[value]
+
+      id1 = subject[IPAddr.new(value)].object_id
+      id2 = subject[ip.id].object_id
+      id3 = subject[value].object_id
+      id4 = subject[ip].object_id
+
+      expect([id1, id2, id3, id4].uniq.size).to eq(1)
+
+      subject.lookup.testing = true
+      subject.lookup.clear
     end
   end
 
