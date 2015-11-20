@@ -87,7 +87,7 @@ end
 describe LookupBy::Lookup do
   context "Uncacheable.lookup_by :column, cache: true, find_or_create: true" do
     it "fails when trying to cache and write-through" do
-      expect { Uncacheable }.to raise_error
+      expect { Uncacheable }.to raise_error(ArgumentError)
     end
   end
 

@@ -56,7 +56,7 @@ describe LookupBy::Caching::LRU do
   describe "#fetch" do
     specify { expect(cache.fetch(1)).to eq "one" }
     specify { expect(cache.fetch(3) { |key| key }).to eq 3 }
-    specify { expect { cache.fetch(3) }.to raise_error }
+    specify { expect { cache.fetch(3) }.to raise_error(KeyError) }
 
     it "writes missing values" do
       expect(cache.fetch(3) { "missing" }).to eq "missing"
@@ -71,7 +71,7 @@ describe LookupBy::Caching::LRU do
   end
 
   describe "#max_size=" do
-    specify { expect { cache.max_size = -1 }.to raise_error }
+    specify { expect { cache.max_size = -1 }.to raise_error(ArgumentError) }
   end
 
   describe "#size" do
