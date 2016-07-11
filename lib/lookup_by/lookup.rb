@@ -100,7 +100,7 @@ module LookupBy
           when self    then arg
           else raise TypeError, "#{name}[*args]: args must be at least one String, Symbol, Integer, IPAddr, nil, or #{name}"
           end
-        else return args.map { |arg| self[arg] } 
+        else return args.map { |arg| self[arg] }
         end
       end
 
