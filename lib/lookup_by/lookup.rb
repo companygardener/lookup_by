@@ -72,11 +72,20 @@ module LookupBy
         @lookup.cache.values
       end
 
-      def count(column_name = nil, options = {})
-        return super if @lookup.read_through?
-        return super if column_name
+      if Rails::VERSION::MAJOR <= 4
+        def count(column_name = nil, options = {})
+          return super if @lookup.read_through?
+          return super if column_name
 
-        @lookup.cache.size
+          @lookup.cache.size
+        end
+      else
+        def count(column_name = nil)
+          return super if @lookup.read_through?
+          return super if column_name
+
+          @lookup.cache.size
+        end
       end
 
       def pluck(*column_names)
