@@ -1,6 +1,8 @@
 require "lookup_by/version"
 require "lookup_by/railtie" if defined? Rails
 
+require 'active_support'
+
 module LookupBy
   class Error < StandardError; end
 
