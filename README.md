@@ -19,13 +19,13 @@
 LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
 
 * Configurable lookup column
-* Caching (read-through, write-through, least recently used (LRU))
+* Caching (read-through, write-through, least-recently used (LRU))
 * Symbolized values
 * Normalized values, _e.g. canonicalizing UTF-8 before lookup_
 
 ### Dependencies
 
-* Rails 4.0+ (_tested on Rails 4.0, 4.1, and 4.2_)
+* Rails 4.0+ (_tested on Rails 4.0, 4.1, 4.2, and 5.0_)
 * Ruby 1.9.3+ (_tested on Ruby 1.9.3, 2.0, 2.1, 2.2, 2.3 and Rubinius 3.19_)
 * PostgreSQL
 
@@ -223,11 +223,10 @@ lookup_by :column_name
 # Cache all
 #   Use for a small finite list (e.g. status codes, US states)
 #
-#   Defaults to no read-through
-#     options[:find] = false
+#   Defaults to no read-through, e.g. options[:find] = false
 lookup_by :column_name, cache: true
 
-# Cache N (with LRU eviction)
+# Cache N records, evicting the least-recently used (LRU)
 #   Use for large sets with uneven distribution (e.g. email domain, city)
 #
 #   Requires read-through
@@ -290,7 +289,7 @@ lookup_by :column_name, cache: true, find: true, raise: true
 
 ```ruby
 # Normalize
-#   Run through the your attribute's setter
+#   Call the attribute's setter
 lookup_by :column_name, normalize: true
 ```
 
@@ -306,14 +305,11 @@ lookup_by :column_name, allow_blank: true
 
 ### Threadsafety
 
-Force the LRU to be threadsafe (used to test the SafeLRU).
-
-With Rails 4, the Safe LRU is selected automatically in production-like environments.
+Disable threadsafety using the `:safe` option.
 
 ```ruby
-# Safe
-#   Use threadsafe cache
-lookup_by :column_name, cache: 10, safe: true
+# Default: true
+lookup_by :column_name, cache: 10, safe: false
 ```
 
 # Integration

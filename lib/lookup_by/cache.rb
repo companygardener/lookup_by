@@ -18,7 +18,7 @@ module LookupBy
       @raise_on_miss    = options[:raise] || false
       @testing          = false
       @enabled          = true
-      @safe             = options[:safe] || concurrent?
+      @safe             = options.fetch(:safe, true)
       @mutex            = Mutex.new if @safe
 
       @stats            = { db: Hash.new(0), cache: Hash.new(0) }
@@ -139,11 +139,6 @@ module LookupBy
     end
 
   private
-
-    # RAILS_ENV=test will not use the SafeLRU
-    def concurrent?
-      Rails.configuration.cache_classes && Rails.configuration.eager_load
-    end
 
     def primary_key?(value)
       case @primary_key_type
