@@ -75,11 +75,7 @@ describe LookupBy::Lookup::ClassMethods do
     it "accepts duplicates" do
       expect { City.seed 'Chicago', 'Chicago' }.not_to raise_error
 
-      if Rails::VERSION::MAJOR == 4 && Rails::VERSION::MINOR == 0
-        expect(City.pluck(:city)).to eq(['Chicago'])
-      else
-        expect(City.pluck(:name)).to eq(['Chicago'])
-      end
+      expect(City.pluck(:city)).to eq(['Chicago'])
     end
   end
 end
