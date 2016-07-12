@@ -15,7 +15,7 @@ group :development, :test do
   gem 'rspec-rails'
 
   gem "pg", platform: :ruby
-  gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
+  # gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
 
   gem "simplecov", require: false
   gem 'coveralls', require: false
