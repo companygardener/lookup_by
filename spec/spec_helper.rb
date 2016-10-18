@@ -76,11 +76,11 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.before(:each) do
-    LookupBy.reload
+    LookupBy.enable
   end
 
   config.after(:each) do
-    LookupBy.clear
+    LookupBy.disable
   end
 
   if RUBY_ENGINE == 'rbx' && ENV['PROFILE']

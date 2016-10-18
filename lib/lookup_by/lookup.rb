@@ -67,6 +67,7 @@ module LookupBy
       def all(*args)
         return super if Rails::VERSION::MAJOR >= 4
         return super if @lookup.read_through?
+        return super if @lookup.disabled?
         return super if args.any?
 
         @lookup.cache.values
@@ -74,6 +75,7 @@ module LookupBy
 
       def count(column_name = nil, options = {})
         return super if @lookup.read_through?
+        return super if @lookup.disabled?
         return super if column_name
 
         @lookup.cache.size
@@ -81,6 +83,7 @@ module LookupBy
 
       def pluck(*column_names)
         return super if @lookup.read_through?
+        return super if @lookup.disabled?
         return super if column_names.size > 1
 
         @lookup.cache.values.map { |o| o.send(column_names.first) }
