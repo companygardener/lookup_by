@@ -3,5 +3,7 @@ dependencies:
     - bundle exec appraisal install
 
 test:
+  pre:
+    - bundle exec rake app:db:test:prepare
   override:
     - bundle exec appraisal rake
