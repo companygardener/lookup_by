@@ -2,12 +2,17 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.6.1
+-- Dumped by pg_dump version 9.6.1
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 --
 -- Name: traffic; Type: SCHEMA; Schema: -; Owner: -
@@ -51,7 +56,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: accounts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: accounts; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE accounts (
@@ -81,7 +86,7 @@ ALTER SEQUENCE accounts_account_id_seq OWNED BY accounts.account_id;
 
 
 --
--- Name: addresses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: addresses; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE addresses (
@@ -115,7 +120,19 @@ ALTER SEQUENCE addresses_address_id_seq OWNED BY addresses.address_id;
 
 
 --
--- Name: cities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: cities; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE cities (
@@ -144,7 +161,7 @@ ALTER SEQUENCE cities_city_id_seq OWNED BY cities.city_id;
 
 
 --
--- Name: countries; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: countries; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE countries (
@@ -173,7 +190,7 @@ ALTER SEQUENCE countries_country_id_seq OWNED BY countries.country_id;
 
 
 --
--- Name: email_addresses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: email_addresses; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE email_addresses (
@@ -202,7 +219,7 @@ ALTER SEQUENCE email_addresses_email_address_id_seq OWNED BY email_addresses.ema
 
 
 --
--- Name: ip_addresses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: ip_addresses; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE ip_addresses (
@@ -231,7 +248,7 @@ ALTER SEQUENCE ip_addresses_ip_address_id_seq OWNED BY ip_addresses.ip_address_i
 
 
 --
--- Name: phone_numbers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: phone_numbers; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE phone_numbers (
@@ -260,7 +277,7 @@ ALTER SEQUENCE phone_numbers_phone_number_id_seq OWNED BY phone_numbers.phone_nu
 
 
 --
--- Name: postal_codes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: postal_codes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE postal_codes (
@@ -289,7 +306,7 @@ ALTER SEQUENCE postal_codes_postal_code_id_seq OWNED BY postal_codes.postal_code
 
 
 --
--- Name: raisins; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: raisins; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE raisins (
@@ -318,7 +335,7 @@ ALTER SEQUENCE raisins_raisin_id_seq OWNED BY raisins.raisin_id;
 
 
 --
--- Name: read_through_raisins; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: read_through_raisins; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE read_through_raisins (
@@ -347,16 +364,16 @@ ALTER SEQUENCE read_through_raisins_read_through_raisin_id_seq OWNED BY read_thr
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE schema_migrations (
-    version character varying(255) NOT NULL
+    version character varying NOT NULL
 );
 
 
 --
--- Name: states; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: states; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE states (
@@ -385,7 +402,7 @@ ALTER SEQUENCE states_state_id_seq OWNED BY states.state_id;
 
 
 --
--- Name: statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: statuses; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE statuses (
@@ -414,7 +431,7 @@ ALTER SEQUENCE statuses_status_id_seq OWNED BY statuses.status_id;
 
 
 --
--- Name: streets; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: streets; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE streets (
@@ -443,7 +460,7 @@ ALTER SEQUENCE streets_street_id_seq OWNED BY streets.street_id;
 
 
 --
--- Name: uncacheables; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: uncacheables; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE uncacheables (
@@ -472,7 +489,7 @@ ALTER SEQUENCE uncacheables_uncacheable_id_seq OWNED BY uncacheables.uncacheable
 
 
 --
--- Name: unfindables; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: unfindables; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE unfindables (
@@ -501,7 +518,7 @@ ALTER SEQUENCE unfindables_unfindable_id_seq OWNED BY unfindables.unfindable_id;
 
 
 --
--- Name: unsynchronizables; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: unsynchronizables; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE unsynchronizables (
@@ -530,7 +547,7 @@ ALTER SEQUENCE unsynchronizables_unsynchronizable_id_seq OWNED BY unsynchronizab
 
 
 --
--- Name: user_agents; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: user_agents; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE user_agents (
@@ -561,7 +578,7 @@ ALTER SEQUENCE user_agents_user_agent_id_seq OWNED BY user_agents.user_agent_id;
 SET search_path = traffic, pg_catalog;
 
 --
--- Name: paths; Type: TABLE; Schema: traffic; Owner: -; Tablespace: 
+-- Name: paths; Type: TABLE; Schema: traffic; Owner: -
 --
 
 CREATE TABLE paths (
@@ -573,126 +590,126 @@ CREATE TABLE paths (
 SET search_path = public, pg_catalog;
 
 --
--- Name: account_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: accounts account_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY accounts ALTER COLUMN account_id SET DEFAULT nextval('accounts_account_id_seq'::regclass);
 
 
 --
--- Name: address_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: addresses address_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses ALTER COLUMN address_id SET DEFAULT nextval('addresses_address_id_seq'::regclass);
 
 
 --
--- Name: city_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: cities city_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY cities ALTER COLUMN city_id SET DEFAULT nextval('cities_city_id_seq'::regclass);
 
 
 --
--- Name: country_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: countries country_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY countries ALTER COLUMN country_id SET DEFAULT nextval('countries_country_id_seq'::regclass);
 
 
 --
--- Name: email_address_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: email_addresses email_address_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY email_addresses ALTER COLUMN email_address_id SET DEFAULT nextval('email_addresses_email_address_id_seq'::regclass);
 
 
 --
--- Name: ip_address_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: ip_addresses ip_address_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ip_addresses ALTER COLUMN ip_address_id SET DEFAULT nextval('ip_addresses_ip_address_id_seq'::regclass);
 
 
 --
--- Name: phone_number_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: phone_numbers phone_number_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY phone_numbers ALTER COLUMN phone_number_id SET DEFAULT nextval('phone_numbers_phone_number_id_seq'::regclass);
 
 
 --
--- Name: postal_code_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: postal_codes postal_code_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY postal_codes ALTER COLUMN postal_code_id SET DEFAULT nextval('postal_codes_postal_code_id_seq'::regclass);
 
 
 --
--- Name: raisin_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: raisins raisin_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY raisins ALTER COLUMN raisin_id SET DEFAULT nextval('raisins_raisin_id_seq'::regclass);
 
 
 --
--- Name: read_through_raisin_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: read_through_raisins read_through_raisin_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY read_through_raisins ALTER COLUMN read_through_raisin_id SET DEFAULT nextval('read_through_raisins_read_through_raisin_id_seq'::regclass);
 
 
 --
--- Name: state_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: states state_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY states ALTER COLUMN state_id SET DEFAULT nextval('states_state_id_seq'::regclass);
 
 
 --
--- Name: status_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: statuses status_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY statuses ALTER COLUMN status_id SET DEFAULT nextval('statuses_status_id_seq'::regclass);
 
 
 --
--- Name: street_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: streets street_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY streets ALTER COLUMN street_id SET DEFAULT nextval('streets_street_id_seq'::regclass);
 
 
 --
--- Name: uncacheable_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: uncacheables uncacheable_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uncacheables ALTER COLUMN uncacheable_id SET DEFAULT nextval('uncacheables_uncacheable_id_seq'::regclass);
 
 
 --
--- Name: unfindable_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: unfindables unfindable_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY unfindables ALTER COLUMN unfindable_id SET DEFAULT nextval('unfindables_unfindable_id_seq'::regclass);
 
 
 --
--- Name: unsynchronizable_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: unsynchronizables unsynchronizable_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY unsynchronizables ALTER COLUMN unsynchronizable_id SET DEFAULT nextval('unsynchronizables_unsynchronizable_id_seq'::regclass);
 
 
 --
--- Name: user_agent_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: user_agents user_agent_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY user_agents ALTER COLUMN user_agent_id SET DEFAULT nextval('user_agents_user_agent_id_seq'::regclass);
 
 
 --
--- Name: accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: accounts accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY accounts
@@ -700,7 +717,7 @@ ALTER TABLE ONLY accounts
 
 
 --
--- Name: addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: addresses addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -708,7 +725,15 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: cities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: cities cities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY cities
@@ -716,7 +741,7 @@ ALTER TABLE ONLY cities
 
 
 --
--- Name: countries_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: countries countries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY countries
@@ -724,7 +749,7 @@ ALTER TABLE ONLY countries
 
 
 --
--- Name: email_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: email_addresses email_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY email_addresses
@@ -732,7 +757,7 @@ ALTER TABLE ONLY email_addresses
 
 
 --
--- Name: ip_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: ip_addresses ip_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ip_addresses
@@ -740,7 +765,7 @@ ALTER TABLE ONLY ip_addresses
 
 
 --
--- Name: phone_numbers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: phone_numbers phone_numbers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY phone_numbers
@@ -748,7 +773,7 @@ ALTER TABLE ONLY phone_numbers
 
 
 --
--- Name: postal_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: postal_codes postal_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY postal_codes
@@ -756,7 +781,7 @@ ALTER TABLE ONLY postal_codes
 
 
 --
--- Name: raisins_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: raisins raisins_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY raisins
@@ -764,7 +789,7 @@ ALTER TABLE ONLY raisins
 
 
 --
--- Name: read_through_raisins_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: read_through_raisins read_through_raisins_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY read_through_raisins
@@ -772,7 +797,15 @@ ALTER TABLE ONLY read_through_raisins
 
 
 --
--- Name: states_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY schema_migrations
+    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: states states_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY states
@@ -780,7 +813,7 @@ ALTER TABLE ONLY states
 
 
 --
--- Name: statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: statuses statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY statuses
@@ -788,7 +821,7 @@ ALTER TABLE ONLY statuses
 
 
 --
--- Name: streets_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: streets streets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY streets
@@ -796,7 +829,7 @@ ALTER TABLE ONLY streets
 
 
 --
--- Name: uncacheables_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: uncacheables uncacheables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uncacheables
@@ -804,7 +837,7 @@ ALTER TABLE ONLY uncacheables
 
 
 --
--- Name: unfindables_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: unfindables unfindables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY unfindables
@@ -812,7 +845,7 @@ ALTER TABLE ONLY unfindables
 
 
 --
--- Name: unsynchronizables_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: unsynchronizables unsynchronizables_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY unsynchronizables
@@ -820,7 +853,7 @@ ALTER TABLE ONLY unsynchronizables
 
 
 --
--- Name: user_agents_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: user_agents user_agents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY user_agents
@@ -830,7 +863,7 @@ ALTER TABLE ONLY user_agents
 SET search_path = traffic, pg_catalog;
 
 --
--- Name: paths_pkey; Type: CONSTRAINT; Schema: traffic; Owner: -; Tablespace: 
+-- Name: paths paths_pkey; Type: CONSTRAINT; Schema: traffic; Owner: -
 --
 
 ALTER TABLE ONLY paths
@@ -840,126 +873,161 @@ ALTER TABLE ONLY paths
 SET search_path = public, pg_catalog;
 
 --
--- Name: accounts__u_account; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: accounts__u_account; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX accounts__u_account ON accounts USING btree (account);
 
 
 --
--- Name: addresses__u_address; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: addresses__u_address; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX addresses__u_address ON addresses USING btree (address);
 
 
 --
--- Name: cities__u_city; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: cities__u_city; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX cities__u_city ON cities USING btree (city);
 
 
 --
--- Name: countries__u_country; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: countries__u_country; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX countries__u_country ON countries USING btree (country);
 
 
 --
--- Name: email_addresses__u_email_address; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: email_addresses__u_email_address; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX email_addresses__u_email_address ON email_addresses USING btree (email_address);
 
 
 --
--- Name: ip_addresses__u_ip_address; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_accounts_on_phone_number_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_accounts_on_phone_number_id ON accounts USING btree (phone_number_id);
+
+
+--
+-- Name: index_addresses_on_city_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_addresses_on_city_id ON addresses USING btree (city_id);
+
+
+--
+-- Name: index_addresses_on_country_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_addresses_on_country_id ON addresses USING btree (country_id);
+
+
+--
+-- Name: index_addresses_on_postal_code_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_addresses_on_postal_code_id ON addresses USING btree (postal_code_id);
+
+
+--
+-- Name: index_addresses_on_state_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_addresses_on_state_id ON addresses USING btree (state_id);
+
+
+--
+-- Name: index_addresses_on_street_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_addresses_on_street_id ON addresses USING btree (street_id);
+
+
+--
+-- Name: ip_addresses__u_ip_address; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX ip_addresses__u_ip_address ON ip_addresses USING btree (ip_address);
 
 
 --
--- Name: phone_numbers__u_phone_number; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: phone_numbers__u_phone_number; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX phone_numbers__u_phone_number ON phone_numbers USING btree (phone_number);
 
 
 --
--- Name: postal_codes__u_postal_code; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: postal_codes__u_postal_code; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX postal_codes__u_postal_code ON postal_codes USING btree (postal_code);
 
 
 --
--- Name: raisins__u_raisin; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: raisins__u_raisin; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX raisins__u_raisin ON raisins USING btree (raisin);
 
 
 --
--- Name: read_through_raisins__u_read_through_raisin; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: read_through_raisins__u_read_through_raisin; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX read_through_raisins__u_read_through_raisin ON read_through_raisins USING btree (read_through_raisin);
 
 
 --
--- Name: states__u_state; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: states__u_state; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX states__u_state ON states USING btree (state);
 
 
 --
--- Name: statuses__u_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: statuses__u_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX statuses__u_status ON statuses USING btree (status);
 
 
 --
--- Name: streets__u_street; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: streets__u_street; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX streets__u_street ON streets USING btree (street);
 
 
 --
--- Name: uncacheables__u_uncacheable; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: uncacheables__u_uncacheable; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX uncacheables__u_uncacheable ON uncacheables USING btree (uncacheable);
 
 
 --
--- Name: unfindables__u_unfindable; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: unfindables__u_unfindable; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX unfindables__u_unfindable ON unfindables USING btree (unfindable);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
-
-
---
--- Name: unsynchronizables__u_unsynchronizable; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: unsynchronizables__u_unsynchronizable; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX unsynchronizables__u_unsynchronizable ON unsynchronizables USING btree (unsynchronizable);
 
 
 --
--- Name: user_agents__u_user_agent; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: user_agents__u_user_agent; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX user_agents__u_user_agent ON user_agents USING btree (user_agent);
@@ -968,7 +1036,7 @@ CREATE UNIQUE INDEX user_agents__u_user_agent ON user_agents USING btree (user_a
 SET search_path = traffic, pg_catalog;
 
 --
--- Name: paths__u_path; Type: INDEX; Schema: traffic; Owner: -; Tablespace: 
+-- Name: paths__u_path; Type: INDEX; Schema: traffic; Owner: -
 --
 
 CREATE UNIQUE INDEX paths__u_path ON paths USING btree (path);
@@ -978,7 +1046,8 @@ CREATE UNIQUE INDEX paths__u_path ON paths USING btree (path);
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "$user", public;
 
 INSERT INTO schema_migrations (version) VALUES ('20121019040009');
+
 
