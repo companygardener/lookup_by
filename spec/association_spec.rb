@@ -34,7 +34,13 @@ describe ::ActiveRecord::Base do
     end
 
     it "requires a foreign key" do
-      expect { subject.lookup_for :missing }.to raise_error LookupBy::Error, /foreign key/
+      expect(Rails.logger).to receive(:error)
+
+      subject.lookup_for :missing, class_name: 'city'
+    end
+
+    it 'requires a class' do
+      expect { subject.lookup_for :uninitialized }.to raise_error LookupBy::Error, /uninitialized constant/
     end
 
     it "rejects unsaved lookup values" do

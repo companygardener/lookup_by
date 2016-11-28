@@ -67,10 +67,18 @@ module LookupBy
         class_name = options[:class_name] || field
         class_name = class_name.to_s.camelize
 
+        begin
+          klass = class_name.constantize
+        rescue NameError
+          raise Error, "uninitialized constant #{class_name}, call lookup_for with `class_name` option if it doesn't match the foreign key"
+        end
+
+        raise Error, "class #{class_name} does not use lookup_by" unless klass.respond_to?(:lookup)
+
         foreign_key = options[:foreign_key] || "#{field}_id"
         foreign_key = foreign_key.to_sym
 
-        raise Error, "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
+        Rails.logger.error "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
 
         strict = options[:strict]
         strict = true if strict.nil?
@@ -90,9 +98,6 @@ module LookupBy
         SCOPES
 
         cast = options[:symbolize] ? ".to_sym" : ""
-
-        klass = class_name.constantize
-        raise Error, "class #{class_name} does not use lookup_by" unless klass.respond_to?(:lookup)
 
         lookup_field  = klass.lookup.field
         lookup_object = "#{class_name}[#{foreign_key}]"
