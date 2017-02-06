@@ -1,1 +1,0 @@
-State.create(name: 'AL')

@@ -1,6 +1,7 @@
 module LookupBy
   class Cache
     attr_reader   :cache, :field, :stats
+
     attr_accessor :testing
 
     def initialize(klass, options = {})
@@ -18,7 +19,7 @@ module LookupBy
       @raise_on_miss    = options[:raise] || false
       @testing          = false
       @enabled          = true
-      @safe             = options[:safe] || concurrent?
+      @safe             = options.fetch(:safe, true)
       @mutex            = Mutex.new if @safe
 
       @stats            = { db: Hash.new(0), cache: Hash.new(0) }
@@ -51,16 +52,19 @@ module LookupBy
       end
     end
 
-    def reload
+    def load
       return unless @type == :all
 
-      clear
-
       ::ActiveRecord::Base.connection.send :log, "", "#{@klass.name} Load Cache All" do
-        @klass.order(@order).each do |object|
+        @klass.order(@order).readonly.each do |object|
           cache_write(object)
         end
       end
+    end
+
+    def reload
+      clear
+      load
     end
 
     def clear
@@ -68,19 +72,15 @@ module LookupBy
     end
 
     def create(*args, &block)
-      created = @klass.create(*args, &block)
-
-      cache_write(created) if cache?
-
-      created
+      @klass.create(*args, &block).tap do |created|
+        cache_write(created) if cache?
+      end
     end
 
     def create!(*args, &block)
-      created = @klass.create!(*args, &block)
-
-      cache_write(created) if cache?
-
-      created
+      @klass.create!(*args, &block).tap do |created|
+        cache_write(created) if cache?
+      end
     end
 
     def seed(*values)
@@ -153,11 +153,6 @@ module LookupBy
     end
 
   private
-
-    # RAILS_ENV=test will not use the SafeLRU
-    def concurrent?
-      Rails.configuration.cache_classes && Rails.configuration.eager_load
-    end
 
     def primary_key?(value)
       case @primary_key_type

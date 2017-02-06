@@ -1,5 +1,10 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
+
+require 'combustion'
+
+Combustion.initialize! :active_record
+
 require 'spec_helper'
 
 if ENV["COVERAGE"]
@@ -12,12 +17,6 @@ if ENV["COVERAGE"]
   ]
 
   SimpleCov.start
-end
-
-begin
-  require File.expand_path("../../config/environment", __FILE__)
-rescue LoadError
-  require File.expand_path("../dummy/config/environment", __FILE__)
 end
 
 require 'pry'

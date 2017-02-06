@@ -113,6 +113,7 @@ describe LookupBy::Association do
     end
   end
 
+  # spec/internal/lib/missing.rb
   context "Missing.lookup_for :city" do
     it "does not raise foreign key error when table hasn't been created" do
       expect { require "missing" }.to_not raise_error

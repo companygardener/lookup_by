@@ -22,6 +22,7 @@ describe LookupBy do
   describe ".clear" do
     it "clears all lookup caches" do
       Path.lookup.cache[1] = "remove-this"
+
       expect { LookupBy.clear }.to change { Path.lookup.cache.size }
     end
   end
@@ -75,16 +76,29 @@ describe LookupBy::Lookup::ClassMethods do
     it "accepts duplicates" do
       expect { City.seed 'Chicago', 'Chicago' }.not_to raise_error
 
-      if Rails::VERSION::MAJOR == 4 && Rails::VERSION::MINOR == 0
-        expect(City.pluck(:city)).to eq(['Chicago'])
-      else
-        expect(City.pluck(:name)).to eq(['Chicago'])
-      end
+      expect(City.pluck(:city)).to eq(['Chicago'])
     end
   end
 end
 
 describe LookupBy::Lookup do
+  describe "#clear" do
+    it "clears the cache" do
+      expect(State.lookup.cache).to be_present
+      State.lookup.clear
+      expect(State.lookup.cache).to be_empty
+    end
+  end
+
+  describe "#load" do
+    it "populates the cache" do
+      State.lookup.clear
+      expect(State.lookup.cache).to be_empty
+      State.lookup.load
+      expect(State.lookup.cache).to be_present
+    end
+  end
+
   context "Uncacheable.lookup_by :column, cache: true, find_or_create: true" do
     it "fails when trying to cache and write-through" do
       expect { Uncacheable }.to raise_error(ArgumentError)

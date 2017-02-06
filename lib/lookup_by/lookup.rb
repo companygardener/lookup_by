@@ -55,7 +55,7 @@ module LookupBy
           end
 
           @lookup = Cache.new(self, options.merge(field: field))
-          @lookup.reload
+          @lookup.load
         end
 
         LookupBy.register self
@@ -63,22 +63,34 @@ module LookupBy
     end
 
     module ClassMethods
-      # TODO: Rails 4 needs to return a proxy object here
-      def all(*args)
-        return super if Rails::VERSION::MAJOR >= 4
+      # Rails 4.1, 4.2, 5.0
+      def all
         return super if @lookup.read_through?
+        return super if @lookup.cache.empty?
         return super if @lookup.disabled?
-        return super if args.any?
 
-        @lookup.cache.values
+        relation.tap do |rel|
+          rel.instance_variable_set(:@records, @lookup.cache.values)
+          rel.instance_variable_set(:@loaded, true)
+        end
       end
 
-      def count(column_name = nil, options = {})
-        return super if @lookup.read_through?
-        return super if @lookup.disabled?
-        return super if column_name
+      if Rails::VERSION::MAJOR <= 4
+        # Rails 4.1, 4.2
+        def count(column_name = nil, options = {})
+          return super if @lookup.read_through?
+          return super if column_name
 
-        @lookup.cache.size
+          @lookup.cache.size
+        end
+      else
+        # Rails 5.0
+        def count(column_name = nil)
+          return super if @lookup.read_through?
+          return super if column_name
+
+          @lookup.cache.size
+        end
       end
 
       def pluck(*column_names)
@@ -103,7 +115,7 @@ module LookupBy
           when self    then arg
           else raise TypeError, "#{name}[*args]: args must be at least one String, Symbol, Integer, IPAddr, nil, or #{name}"
           end
-        else return args.map { |arg| self[arg] } 
+        else return args.map { |arg| self[arg] }
         end
       end
 

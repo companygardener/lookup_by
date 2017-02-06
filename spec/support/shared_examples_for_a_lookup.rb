@@ -108,15 +108,9 @@ shared_examples "a strict cache" do
     expect { subject.create(name: "new") }.to_not change(subject, :count)
   end
 
-  xit "does cache .all" do
+  it "caches .all" do
     new = subject.create(name: 'add')
     expect(subject.all.to_a).not_to include(new)
-  end
-
-  xit "reloads .all when called with args" do
-    new = subject.create(name: "new")
-    expect(subject.all.to_a).not_to include(new)
-    expect(subject.all({}).to_a).to include(new)
   end
 
   it "caches .pluck" do

@@ -1,0 +1,8 @@
+development:
+  adapter: postgresql
+  database: lookup_by_development
+
+# Combustion uses the "test" config even when Rails.env.development?
+test:
+  adapter: postgresql
+  database: lookup_by_<%= Rails.env %>

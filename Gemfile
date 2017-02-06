@@ -8,12 +8,14 @@ gemspec
 group :development, :test do
   gem 'appraisal', '~> 2.1.0', require: false
 
+  gem 'combustion'
+
   gem 'rspec'
   gem 'rspec-its'
   gem 'rspec-rails'
 
   gem "pg", platform: :ruby
-  gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
+  # gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
 
   gem "simplecov", require: false
   gem 'coveralls', require: false

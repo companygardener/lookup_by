@@ -1,16 +1,24 @@
 language: ruby
+
+cache:
+  bundler: true
+
 rvm:
-  - 1.9.3-p551
-  - 2.0.0
-  - 2.1.8
-  - 2.2.4
-  - 2.3.0
-  - rbx-3.19
+  - 2.2.2
+  - 2.2.5
+  - 2.3.1
+
 services:
   - postgresql
-before_script:
-  - psql -c 'create database lookup_by_test' -U postgres
+
+# Travis defaults to PostgreSQL 9.1
+addons:
+  postgresql: "9.4"
+
 script:
-  - bundle exec rake app:db:test:prepare
   - bundle exec appraisal install
   - bundle exec appraisal rake
+
+general:
+  artifacts:
+    - coverage

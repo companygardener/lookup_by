@@ -1,4 +1,4 @@
-# TODO: Evaluate using ThreadSafe::Hash and ThreadSafe::Array.
+# @todo: Evaluate using ThreadSafe::Hash and ThreadSafe::Array.
 
 require "mutex_m"
 
