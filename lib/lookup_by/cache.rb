@@ -129,13 +129,27 @@ module LookupBy
     end
 
     def enable!
+      return if enabled?
+
       @enabled = true
       reload
     end
 
     def disable!
+      return if disabled?
+
       @enabled = false
       clear
+    end
+
+    def while_disabled
+      raise ArgumentError, "no block given" unless block_given?
+
+      disable!
+
+      yield
+
+      enable!
     end
 
   private

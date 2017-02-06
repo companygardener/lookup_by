@@ -1,3 +1,3 @@
 module LookupBy
-  VERSION = "0.10.7"
+  VERSION = "0.10.9"
 end

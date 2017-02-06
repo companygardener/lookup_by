@@ -95,6 +95,7 @@ module LookupBy
 
       def pluck(*column_names)
         return super if @lookup.read_through?
+        return super if @lookup.disabled?
         return super if column_names.size > 1
 
         @lookup.cache.values.map { |o| o.send(column_names.first) }

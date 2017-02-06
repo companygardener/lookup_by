@@ -1,12 +1,9 @@
-machine:
-  ruby:
-    version: ruby-2.3.1
-
-database:
-  override:
-    - echo "No database setup"
+dependencies:
+  post:
+    - bundle exec appraisal install
 
 test:
+  pre:
+    - bundle exec rake app:db:test:prepare
   override:
-    - bundle exec appraisal install
     - bundle exec appraisal rake
