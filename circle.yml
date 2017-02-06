@@ -2,8 +2,10 @@ dependencies:
   post:
     - bundle exec appraisal install
 
+database:
+  override:
+    - echo "Skipping default"
+
 test:
-  pre:
-    - bundle exec rake app:db:test:prepare
   override:
     - bundle exec appraisal rake
