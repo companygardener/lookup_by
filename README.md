@@ -41,7 +41,7 @@ LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces norma
 
 Please create [Issues][] to submit bug reports and feature requests. However, I ask that you'd kindly review [these bug reporting guidelines](https://github.com/companygardener/lookup_by/wiki/Bug-Reports) first.
 
-_If you find a security bug, **_do not_** use the public issue tracker. Instead, send an email to: thecompanygardener@gmail.com._
+_If you find a security bug, **do not** use the public issue tracker. Instead, send an email to: thecompanygardener@gmail.com._
 
 # Installation
 
