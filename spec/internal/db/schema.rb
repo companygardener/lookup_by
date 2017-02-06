@@ -43,6 +43,6 @@ end
 
 print 'Seeding db...'
 
-State.create(name: 'AL')
+State.lookup.create(name: 'AL')
 
 puts 'done'

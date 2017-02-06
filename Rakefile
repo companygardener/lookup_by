@@ -18,6 +18,8 @@ task :console do
 
   ARGV.clear
 
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
+
   require 'pry'
   Pry.start
 end

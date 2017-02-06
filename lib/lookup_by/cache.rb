@@ -1,6 +1,7 @@
 module LookupBy
   class Cache
     attr_reader   :cache, :field, :stats
+
     attr_accessor :testing
 
     def initialize(klass, options = {})
@@ -51,16 +52,19 @@ module LookupBy
       end
     end
 
-    def reload
+    def load
       return unless @type == :all
 
-      clear
-
       ::ActiveRecord::Base.connection.send :log, "", "#{@klass.name} Load Cache All" do
-        @klass.order(@order).each do |object|
+        @klass.order(@order).readonly.each do |object|
           cache_write(object)
         end
       end
+    end
+
+    def reload
+      clear
+      load
     end
 
     def clear
@@ -68,19 +72,15 @@ module LookupBy
     end
 
     def create(*args, &block)
-      created = @klass.create(*args, &block)
-
-      cache_write(created) if cache?
-
-      created
+      @klass.create(*args, &block).tap do |created|
+        cache_write(created) if cache?
+      end
     end
 
     def create!(*args, &block)
-      created = @klass.create!(*args, &block)
-
-      cache_write(created) if cache?
-
-      created
+      @klass.create!(*args, &block).tap do |created|
+        cache_write(created) if cache?
+      end
     end
 
     def seed(*values)
@@ -152,7 +152,6 @@ module LookupBy
     def normalize(value)
       @klass.new(@field => value).send(@field)
     end
-
 
     if Rails.env.production?
       def cache_read(value)
