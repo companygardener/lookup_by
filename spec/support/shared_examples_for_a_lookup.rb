@@ -8,6 +8,25 @@ shared_examples "a lookup" do
     expect(subject.is_a_lookup?).to be true
   end
 
+  it "seeds a single value" do
+    subject.seed "Missing"
+
+    expect(subject.pluck(subject.lookup.field)).to include('Missing')
+  end
+
+  it "seeds multiple values" do
+    subject.seed "New 1", "New 2"
+
+    expect(subject.pluck(subject.lookup.field)).to include('New 1', 'New 2')
+  end
+
+  it "seeds without duplicates" do
+    subject.seed "Missing", "Missing"
+    subject.seed "Missing"
+
+    expect(subject.pluck(subject.lookup.field)).to include('Missing')
+  end
+
   it "raises with no args" do
     expect { subject[] }.to raise_error ArgumentError
   end
@@ -38,6 +57,14 @@ shared_examples "a lookup" do
 
   it "proxies create!" do
     expect { subject.lookup.create!(name: "add to cache") }.to change(subject, :count).by(1)
+  end
+
+  it "doesn't break first_or_create! called on a scope" do
+    subject.where(subject.lookup.field => "Missing").first_or_create!
+
+    subject.lookup.reload
+
+    expect(subject.pluck(subject.lookup.field)).to include("Missing")
   end
 end
 

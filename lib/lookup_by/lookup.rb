@@ -65,6 +65,8 @@ module LookupBy
     module ClassMethods
       # Rails 4.1, 4.2, 5.0
       def all
+        return super if current_scope
+
         return super if @lookup.read_through?
         return super if @lookup.cache.empty?
         return super if @lookup.disabled?
