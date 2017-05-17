@@ -75,6 +75,11 @@ class ExampleObject < ActiveRecord::Base
   # Defines #status and #status= instance methods that transparently reference the lookup table.
   # Defines .with_status(*names) and .without_status(*names) scopes on the model.
 end
+
+class Address < ActiveRecord::Base
+  # scopes can be renamed
+  lookup_for :city, scope: :inside_city, inverse_scope: :outside_city
+end
 ```
 
 ### Define the lookup model
