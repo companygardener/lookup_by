@@ -1,6 +1,7 @@
 ActiveRecord::Schema.define do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+  enable_extension "pgcrypto"
 
   create_lookup_tables :cities, :states, :postal_codes, :streets, :countries
 
