@@ -22,8 +22,10 @@ describe LookupBy do
   describe ".clear" do
     it "clears all lookup caches" do
       Path.lookup.cache[1] = "remove-this"
+      Path.lookup.reverse["remove-this"] = "remove-this"
 
-      expect { LookupBy.clear }.to change { Path.lookup.cache.size }
+      expect { LookupBy.clear }.to change { Path.lookup.cache.size }.
+        and change { Path.lookup.reverse.size }
     end
   end
 

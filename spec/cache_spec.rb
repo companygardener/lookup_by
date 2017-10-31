@@ -9,6 +9,11 @@ describe LookupBy::Cache do
       expect { subject.clear }.to     change(subject.cache, :size).from(1).to(0)
       expect { subject.clear }.not_to change(subject.cache, :size)
     end
+
+    it "clears the reverse cache" do
+      expect { subject.clear }.to     change(subject.reverse, :size).from(1).to(0)
+      expect { subject.clear }.not_to change(subject.reverse, :size)
+    end
   end
 
   describe "#reload" do
@@ -17,6 +22,11 @@ describe LookupBy::Cache do
     it "loads the cache" do
       expect { subject.reload }.to     change(subject.cache, :size).from(0).to(1)
       expect { subject.reload }.not_to change(subject.cache, :size)
+    end
+
+    it "loads the reverse cache" do
+      expect { subject.reload }.to     change(subject.reverse, :size).from(0).to(1)
+      expect { subject.reload }.not_to change(subject.reverse, :size)
     end
   end
 
