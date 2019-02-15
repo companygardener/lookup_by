@@ -1,3 +1,15 @@
+### [v0.11.2](https://github.com/companygardener/lookup_by/compare/v0.11.1...v0.11.2)
+
+Merged a few PRs. Shouldn't break anything.
+
+* Appraisal: add rails 5.1 and 5.2
+* Appraisal: bundle update
+* Fix: alias_method_chain was deprecated a long time ago
+* Fix: clearing the cache will also clear the reverse lookup cache
+* Dev: .ruby-version 2.6.1
+* Doc: docs for :scope and :inverse_scope options on `lookup_for` method
+* Doc: add changelog
+
 ### [v0.11.1](https://github.com/companygardener/lookup_by/compare/v0.11.0...v0.11.1)
 
 #### Fix .all on lookup models
