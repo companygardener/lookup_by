@@ -6,7 +6,8 @@ module LookupBy
       extend ActiveSupport::Concern
 
       included do
-        alias_method_chain :input, :lookup
+        alias_method :input_without_lookup, :input
+        alias_method :input, :input_with_lookup
       end
 
       def input_with_lookup(method, options = {}, &block)
