@@ -1,6 +1,6 @@
 module LookupBy
   class Cache
-    attr_reader   :cache, :field, :stats
+    attr_reader   :cache, :reverse, :field, :stats
 
     attr_accessor :testing
 
@@ -69,6 +69,7 @@ module LookupBy
 
     def clear
       @cache.clear
+      @reverse.clear
     end
 
     def create(*args, &block)
