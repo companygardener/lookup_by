@@ -84,7 +84,7 @@ module LookupBy
         strict = true if strict.nil?
 
         class_eval <<-BELONGS_TO, __FILE__, __LINE__.next
-          belongs_to :#{field}
+          belongs_to :#{field}, autosave: false
         BELONGS_TO
 
         class_eval <<-SCOPES, __FILE__, __LINE__.next if scope_name
