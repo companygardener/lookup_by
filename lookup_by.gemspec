@@ -24,6 +24,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "activerecord",  ">= 4.1.0"
 
-  gem.add_development_dependency "bundler", ">= 1.7.0"
+  gem.add_development_dependency "bundler", ">= 2.0.2"
   gem.add_development_dependency "rake"
 end

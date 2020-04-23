@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "rails", "~> 4.2.0"
+gem "rails", "~> 6.0.0"
 
 group :development, :test do
   gem "appraisal", "~> 2.1.0", :require => false
@@ -10,7 +10,7 @@ group :development, :test do
   gem "rspec"
   gem "rspec-its"
   gem "rspec-rails"
-  gem "pg", "~> 0.11", :platform => :ruby
+  gem "pg", :platform => :ruby
   gem "simplecov", :require => false
   gem "coveralls", :require => false
   gem "pry", :require => false

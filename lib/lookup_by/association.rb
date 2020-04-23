@@ -83,6 +83,10 @@ module LookupBy
         strict = options[:strict]
         strict = true if strict.nil?
 
+        class_eval <<-BELONGS_TO, __FILE__, __LINE__.next
+          belongs_to :#{field}
+        BELONGS_TO
+
         class_eval <<-SCOPES, __FILE__, __LINE__.next if scope_name
           scope :#{scope_name}, ->(*names) { where(#{foreign_key}: #{class_name}[*names]) }
         SCOPES
