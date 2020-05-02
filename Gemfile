@@ -6,7 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem 'appraisal', '~> 2.1.0', require: false
+  gem 'appraisal', '~> 2.2.0', require: false
 
   gem 'combustion'
 
@@ -17,8 +17,7 @@ group :development, :test do
   gem "pg", platform: :ruby
   # gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
 
-  gem "simplecov", require: false
-  gem 'coveralls', require: false
+  gem "simplecov", "~> 0.18.5", require: false
 
   gem "pry",       require: false
   gem 'colored',   require: false
