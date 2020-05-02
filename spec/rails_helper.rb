@@ -20,7 +20,6 @@ if ENV["COVERAGE"]
 end
 
 require 'pry'
-require 'rspec/its'
 require 'rspec/rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

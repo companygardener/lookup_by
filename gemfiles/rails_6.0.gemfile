@@ -8,7 +8,6 @@ group :development, :test do
   gem "appraisal", "~> 2.2.0", require: false
   gem "combustion"
   gem "rspec"
-  gem "rspec-its"
   gem "rspec-rails"
   gem "pg", platform: :ruby
   gem "simplecov", "~> 0.18.5", require: false

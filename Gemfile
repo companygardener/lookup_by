@@ -11,7 +11,6 @@ group :development, :test do
   gem 'combustion'
 
   gem 'rspec'
-  gem 'rspec-its'
   gem 'rspec-rails'
 
   gem "pg", platform: :ruby
