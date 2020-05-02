@@ -9,13 +9,8 @@ require 'spec_helper'
 
 if ENV["COVERAGE"]
   require 'simplecov'
-  require 'coveralls'
 
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    Coveralls::SimpleCov::Formatter,
-    SimpleCov::Formatter::HTMLFormatter
-  ]
-
+  SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
   SimpleCov.start
 end
 
