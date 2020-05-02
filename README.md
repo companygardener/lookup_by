@@ -1,11 +1,9 @@
 # LookupBy
 
 [![Gem Version](https://badge.fury.io/rb/lookup_by.png)][rubygems]
-[![Dependency Status](https://gemnasium.com/companygardener/lookup_by.png)][gemnasium]
 [![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)][codeclimate]
 
 [rubygems]:    https://rubygems.org/gems/lookup_by
-[gemnasium]:   https://gemnasium.com/companygardener/lookup_by
 [codeclimate]: https://codeclimate.com/github/companygardener/lookup_by
 
 # Overview
