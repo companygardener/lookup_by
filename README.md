@@ -1,14 +1,12 @@
 # LookupBy
 
 [![Gem Version](https://badge.fury.io/rb/lookup_by.png)][rubygems]
-[![Build Status](https://secure.travis-ci.org/companygardener/lookup_by.png?branch=master)][travis]
 [![Dependency Status](https://gemnasium.com/companygardener/lookup_by.png)][gemnasium]
 [![Coverage Status](https://coveralls.io/repos/companygardener/lookup_by/badge.png?branch=master)][coveralls]
 [![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)][codeclimate]
 [![Gittip](http://img.shields.io/gittip/companygardener.png)][gittip]
 
 [rubygems]:    https://rubygems.org/gems/lookup_by
-[travis]:      http://travis-ci.org/companygardener/lookup_by
 [gemnasium]:   https://gemnasium.com/companygardener/lookup_by
 [coveralls]:   https://coveralls.io/r/companygardener/lookup_by?branch=master
 [codeclimate]: https://codeclimate.com/github/companygardener/lookup_by
