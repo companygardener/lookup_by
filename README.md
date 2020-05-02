@@ -367,7 +367,7 @@ A list of authors can be found on the [Contributors][] page.
 
 # License
 
-Copyright © 2014 Erik Peterson
+Copyright © 2014–2020 Erik Peterson
 
 MIT License
 
