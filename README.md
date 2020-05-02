@@ -1,4 +1,3 @@
-# LookupBy
 
 [![Gem Version](https://badge.fury.io/rb/lookup_by.png)][rubygems]
 [![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)][codeclimate]
@@ -6,7 +5,7 @@
 [rubygems]:    https://rubygems.org/gems/lookup_by
 [codeclimate]: https://codeclimate.com/github/companygardener/lookup_by
 
-# Overview
+# LookupBy
 
 LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
 
@@ -17,9 +16,20 @@ LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces norma
 
 ### Dependencies
 
-* Rails 4.1+ (_tested on Rails 4.1, 4.2, and 5.0_)
-* Ruby 2.2+ (_tested on Ruby 2.2, 2.3 and Rubinius 3.45_)
+* Rails 5.0+ (_tested on Rails 5.0, 5.1, 5.2, and 6.0_)
+* Ruby 2.4+ (_tested on Ruby 2.4, 2.6 and Rubinius 3.45_)
 * PostgreSQL 9.2+
+
+### Deprecations
+
+- Rails < 5.0 (old versions are incompatible with bundler 2.x, too hard to maintain)
+- Ruby < 2.4 (depends on openssl@1.0, which is end-of-lifed)
+
+If you must use an old version of Ruby, good luck to you. You could try:
+
+    brew install rbenv/tap/openssl@1.0
+    brew install ruby-install
+    ruby-install ruby 2.2.10 --no-install-deps -- --with-openssl-dir=$(brew --prefix openssl@1.0) --disable-install-doc
 
 ### Development
 
@@ -33,7 +43,7 @@ LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces norma
 
 Please create [Issues][] to submit bug reports and feature requests. However, I ask that you'd kindly review [these bug reporting guidelines](https://github.com/companygardener/lookup_by/wiki/Bug-Reports) first.
 
-_If you find a security bug, **do not** use the public issue tracker. Instead, send an email to: thecompanygardener@gmail.com._
+_If you find a security bug, **do not** use the public issue tracker. Instead, send an email to: thecompanygardener[removethisifnotspam]@gmail.com._
 
 # Installation
 
@@ -336,7 +346,7 @@ This provides: `Given I reload the cache for $plural_class_name`
   = f.input :status, :as => :radio
 ```
 
-## Testing
+# Testing
 
 This plugin uses rspec and pry for testing. Make sure you have them installed:
 
