@@ -20,8 +20,4 @@ group :development, :test do
   gem "simplecov", "~> 0.18.5", require: false
 
   gem "pry",       require: false
-  gem 'colored',   require: false
-
-  gem 'racc'
-  gem 'json'
 end
