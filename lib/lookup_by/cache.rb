@@ -170,19 +170,11 @@ module LookupBy
 
     if Rails.env.production?
       def cache_read(value)
-        if primary_key?(value)
-          @cache[value]
-        else
-          @reverse[value]
-        end
+          @cache[value] || @reverse[value]
       end
     else
       def cache_read(value)
-        found = if primary_key?(value)
-          @cache[value]
-        else
-          @reverse[value]
-        end
+        found =  @cache[value] || @reverse[value]
 
         increment :cache, found ? :hit : :miss
 
