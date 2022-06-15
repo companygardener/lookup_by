@@ -22,8 +22,8 @@ Gem::Specification.new do |gem|
   gem.test_files     = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "activerecord",  ">= 5.0.0"
+  gem.add_dependency "activerecord",  ">= 6.0.0"
 
-  gem.add_development_dependency "bundler", ">= 2.0.0"
+  gem.add_development_dependency "bundler", ">= 2.3.3"
   gem.add_development_dependency "rake"
 end

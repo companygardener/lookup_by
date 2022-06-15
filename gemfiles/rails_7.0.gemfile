@@ -2,15 +2,15 @@
 
 source "https://rubygems.org"
 
-gem "activerecord", "~> 5.2.0"
+gem "activerecord", "~> 7.0.0"
 
 group :development, :test do
-  gem "appraisal", "~> 2.2.0", require: false
+  gem "appraisal", "~> 2.4.1", require: false
   gem "combustion"
   gem "rspec"
   gem "rspec-rails"
   gem "pg", platform: :ruby
-  gem "simplecov", "~> 0.18.5", require: false
+  gem "simplecov", "~> 0.21.2", require: false
   gem "pry", require: false
 end
 
