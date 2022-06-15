@@ -180,7 +180,7 @@ module LookupBy
 
         table_options[:id] = false if options[:small]
 
-        create_table name, table_options do |t|
+        create_table name, **table_options do |t|
           t.column table_options[:primary_key], 'smallserial primary key' if options[:small]
 
           t.column lookup_column, lookup_type, null: false
