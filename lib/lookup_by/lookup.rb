@@ -63,7 +63,7 @@ module LookupBy
     end
 
     module ClassMethods
-      # Rails 4.1, 4.2, 5.0
+      # Rails 4.1, 4.2, 5.0+
       def all
         return super if current_scope
 
@@ -86,7 +86,7 @@ module LookupBy
           @lookup.cache.size
         end
       else
-        # Rails 5.0
+        # Rails 5.0+
         def count(column_name = nil)
           return super if @lookup.read_through?
           return super if column_name

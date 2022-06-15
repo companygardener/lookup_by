@@ -1,3 +1,11 @@
+### [v0.12.0](https://github.com/companygardener/lookup_by/compare/v0.11.2...v0.12.0)
+
+Require ruby 2.7. Support ruby 3.1
+
+* Appraisal: remove rails 5.0, 5.1, and 5.2
+* Appraisal: add rails 7.0
+* Dev: .ruby-version 3.1.2
+
 ### [v0.11.2](https://github.com/companygardener/lookup_by/compare/v0.11.1...v0.11.2)
 
 Merged a few PRs. Shouldn't break anything.
