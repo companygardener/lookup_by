@@ -118,9 +118,14 @@ module LookupBy
             value ? value.#{lookup_field}#{cast} : nil
           end
 
-          def #{field}?(name)
-            raise ArgumentError, "Invalid #{field} \#{name.inspect}" unless object = #{class_name}[name]
-            #{foreign_key} == object.id
+          def #{field}?(*names)
+            names.each do |name|
+              raise ArgumentError, "Invalid #{field} \#{name.inspect}" unless object = #{class_name}[name]
+
+              return true if #{foreign_key} == object.id
+            end
+
+            false
           end
 
           def #{field}_before_type_cast
