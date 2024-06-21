@@ -1,7 +1,4 @@
 module LookupBy
-  class RecordNotFound < ActiveRecord::RecordNotFound
-  end
-
   module Lookup
     module MacroMethods
       def is_a_lookup?
