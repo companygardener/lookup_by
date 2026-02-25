@@ -55,7 +55,13 @@ module LookupBy
     def load
       return unless @type == :all
 
-      ::ActiveRecord::Base.connection.send :log, "", "#{@klass.name} Load Cache All" do
+      payload = {
+        sql:        "",
+        name:       "#{@klass.name} Load Cache All",
+        connection: @klass.connection,
+      }
+
+      ActiveSupport::Notifications.instrument("sql.active_record", payload) do
         @klass.order(@order).readonly.each do |object|
           cache_write(object)
         end

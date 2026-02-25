@@ -82,26 +82,4 @@ RSpec.configure do |config|
   config.after(:each) do
     LookupBy.disable
   end
-
-  if RUBY_ENGINE == 'rbx' && ENV['PROFILE']
-    require 'rubinius/profiler'
-
-    profiler = nil
-
-    config.before(:suite) do
-      profiler = Rubinius::Profiler::Instrumenter.new
-    end
-
-    config.before(:each) do
-      profiler.start
-    end
-
-    config.after(:each) do
-      profiler.stop
-    end
-
-    config.after(:suite) do
-      profiler.show
-    end
-  end
 end

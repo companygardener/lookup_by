@@ -5,6 +5,7 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
+require 'logger'
 require 'combustion'
 
 Bundler::GemHelper.install_tasks

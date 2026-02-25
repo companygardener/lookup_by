@@ -105,7 +105,3 @@ module LookupBy
     end
   end
 end
-
-if RUBY_ENGINE == "ruby" && RUBY_VERSION == "2.0.0"
-  require "lookup_by/caching/lru_legacy"
-end

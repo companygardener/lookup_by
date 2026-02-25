@@ -16,20 +16,9 @@ LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces norma
 
 ### Dependencies
 
-* Rails 6.0+ (_tested on Rails 6.0, 6.1, and 7.0_)
-* Ruby 2.7+ (_tested on Ruby 2.7, 3.0, 3.1_)
-* PostgreSQL 9.2+ (tested on 14.2)
-
-### Deprecations
-
-- Rails <= 5.2 (5.x breaks test suite on ruby 3.1; 4.x is incompatible with bundler 2.x, too hard to maintain)
-- Ruby <= 2.6 (end of life; may depend on openssl@1.0, which is also end of life)
-
-If you must use an old version of Ruby, good luck to you. You could try:
-
-    brew install rbenv/tap/openssl@1.0
-    brew install ruby-install
-    ruby-install ruby 2.2.10 --no-install-deps -- --with-openssl-dir=$(brew --prefix openssl@1.0) --disable-install-doc
+* Rails 6.0+ (_tested on Rails 6.0, 6.1, 7.0, 7.1, 7.2, 8.0, and 8.1_)
+* Ruby 3.0+ (_tested on Ruby 3.0, 3.1, 3.2, 3.3, 3.4_)
+* PostgreSQL 9.2+ (tested on 16)
 
 ### Development
 
@@ -369,7 +358,7 @@ A list of authors can be found on the [Contributors][] page.
 
 # License
 
-Copyright © 2014–2022 Erik Peterson
+Copyright © 2014–2026 Erik Peterson
 
 MIT License
 

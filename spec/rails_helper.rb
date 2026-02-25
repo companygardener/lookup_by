@@ -1,6 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 
+require 'logger'
 require 'combustion'
 
 Combustion.initialize! :active_record
@@ -40,5 +41,3 @@ RSpec.configure do |config|
 
   config.infer_spec_type_from_file_location!
 end
-
-require 'rubinius_helper' if ENV["DEBUG"] && RUBY_ENGINE == 'rbx'

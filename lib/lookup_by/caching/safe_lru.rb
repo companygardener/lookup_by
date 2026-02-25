@@ -1,5 +1,3 @@
-# @todo: Evaluate using ThreadSafe::Hash and ThreadSafe::Array.
-
 require "mutex_m"
 
 module LookupBy

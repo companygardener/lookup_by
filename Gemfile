@@ -6,7 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem 'appraisal', "~> 2.4.1", require: false
+  gem 'appraisal', "~> 2.5.0", require: false
 
   gem 'combustion'
 

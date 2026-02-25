@@ -50,8 +50,6 @@ module LookupBy
 
           unless field == :name || column_names.include?("name")
             alias_attribute :name, field
-
-            attr_accessible :name if respond_to?(:accessible_attributes) && accessible_attributes.include?(field)
           end
 
           @lookup = Cache.new(self, options.merge(field: field))
@@ -63,7 +61,6 @@ module LookupBy
     end
 
     module ClassMethods
-      # Rails 4.1, 4.2, 5.0+
       def all
         return super if current_scope
 
@@ -77,22 +74,11 @@ module LookupBy
         end
       end
 
-      if Rails::VERSION::MAJOR <= 4
-        # Rails 4.1, 4.2
-        def count(column_name = nil, options = {})
-          return super if @lookup.read_through?
-          return super if column_name
+      def count(column_name = nil)
+        return super if @lookup.read_through?
+        return super if column_name
 
-          @lookup.cache.size
-        end
-      else
-        # Rails 5.0+
-        def count(column_name = nil)
-          return super if @lookup.read_through?
-          return super if column_name
-
-          @lookup.cache.size
-        end
+        @lookup.cache.size
       end
 
       def pluck(*column_names)
