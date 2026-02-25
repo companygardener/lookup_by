@@ -7,30 +7,24 @@
 
 # LookupBy
 
-LookupBy is a thread-safe lookup table cache for ActiveRecord that reduces normalization pains.
+Stop writing joins for lookup tables. LookupBy gives your ActiveRecord models direct access to statuses, cities, and other reference data — cached and thread-safe.
 
-* Configurable lookup column
-* Caching (read-through, write-through, least-recently used (LRU))
-* Symbolized values
-* Normalized values, _e.g. canonicalizing UTF-8 before lookup_
+* Look up by any column — not just `name` or `id`
+* Automatic caching — read-through, write-through, or LRU
+* Symbol-friendly — `order.status == :paid` just works
+* Normalized lookups — canonicalize UTF-8, strip whitespace, etc.
 
 ### Dependencies
 
-* Rails 6.0+ (_tested on Rails 6.0, 6.1, 7.0, 7.1, 7.2, 8.0, and 8.1_)
-* Ruby 3.0+ (_tested on Ruby 3.0, 3.1, 3.2, 3.3, 3.4_)
-* PostgreSQL 9.2+ (tested on 16)
+* Rails 7.0+ (_tested on 7.0, 7.1, 7.2, 8.0, 8.1_)
+* Ruby 3.1+ (_tested on 3.1, 3.2, 3.3, 3.4, 4.0_)
+* PostgreSQL 9.2+
 
-### Development
+### Links
 
-* [github.com/companygardener/lookup_by][development]
-
-### Source
-
-* git clone git://github.com/companygardener/lookup_by.git
-
-### Bug reports
-
-Please create [Issues][] to submit bug reports and feature requests. However, I ask that you'd kindly review [these bug reporting guidelines](https://github.com/companygardener/lookup_by/wiki/Bug-Reports) first.
+* [Source](http://github.com/companygardener/lookup_by)
+* [Issues](http://github.com/companygardener/lookup_by/issues)
+* [Bug reporting guidelines](https://github.com/companygardener/lookup_by/wiki/Bug-Reports)
 
 _If you find a security bug, **do not** use the public issue tracker. Instead, send an email to: thecompanygardener[removethisifnotspam]@gmail.com._
 
@@ -212,7 +206,7 @@ The default is no caching. You can also cache all records or use an LRU.
 _Note: caching is **per process**, make sure you think through the implications._
 
 ```ruby
-# No caching - Not very useful
+# No caching - Queries the database each time
 #   Default
 lookup_by :column_name
 
@@ -337,14 +331,8 @@ This provides: `Given I reload the cache for $plural_class_name`
 
 # Testing
 
-This plugin uses rspec and pry for testing. Make sure you have them installed:
-
-    bundle
-
-To run the test suite:
-
-    rake app:db:test:prepare
-    rake
+    bundle install
+    appraisal rake
 
 # Contribute
 
@@ -354,7 +342,7 @@ To run the test suite:
   4. Push to the branch `git push origin new-hotness`
   5. Create a Pull Request
 
-A list of authors can be found on the [Contributors][] page.
+A list of authors can be found on the [Contributors](http://github.com/companygardener/lookup_by/graphs/contributors) page.
 
 # License
 
@@ -374,8 +362,3 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-[development]:  http://github.com/companygardener/lookup_by "LookupBy Development"
-[issues]:       http://github.com/companygardener/lookup_by/issues "LookupBy Issues"
-[license]:      http://github.com/companygardener/lookup_by/blob/master/MIT-LICENSE "LookupBy License"
-[contributors]: http://github.com/companygardener/lookup_by/graphs/contributors "LookupBy Contributors"
