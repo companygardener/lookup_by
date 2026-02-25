@@ -20,4 +20,6 @@ group :development, :test do
   gem "simplecov", "~> 0.21.2", require: false
 
   gem "pry", require: false
+
+  gem "benchmark-ips"
 end

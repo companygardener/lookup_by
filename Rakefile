@@ -32,4 +32,9 @@ namespace :db do
   end
 end
 
+desc "Run benchmarks"
+task :benchmark do
+  ruby "benchmark/run"
+end
+
 task :default => :spec

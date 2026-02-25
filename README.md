@@ -7,7 +7,7 @@
 
 # LookupBy
 
-Stop writing joins for lookup tables. LookupBy gives your ActiveRecord models direct access to statuses, cities, and other reference data — cached and thread-safe.
+Cache lookup tables in one line. LookupBy turns `Status["shipped"]` into an in-memory read — 300× faster than a database query, thread-safe, and automatic.
 
 * Look up by any column — not just `name` or `id`
 * Automatic caching — read-through, write-through, or LRU

@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "combustion"
+
+Combustion.initialize! :active_record
+
+require "benchmark/ips"
+
+# --- Seed data ----------------------------------------------------------------
+
+puts "Seeding benchmark data..."
+
+%w[Portland Seattle Denver Austin Chicago Miami Boston].each do |name|
+  City.find_or_create_by!(city: name)
+end
+
+%w[OR WA CO TX IL FL MA].each do |name|
+  State.find_or_create_by!(state: name)
+end
+
+%w[97201 98101 80202 73301 60601 33101 02101].each do |code|
+  PostalCode.find_or_create_by!(postal_code: code)
+end
+
+puts "done\n\n"
+
+# --- Benchmark ----------------------------------------------------------------
+
+Benchmark.ips do |x|
+  x.config(warmup: 2, time: 5)
+
+  x.report("City[]    (no cache)") do
+    City["Portland"]
+  end
+
+  x.report("State[]   (full cache)") do
+    State["OR"]
+  end
+
+  x.report("PostalCode[] (LRU cache)") do
+    PostalCode["97201"]
+  end
+
+  x.compare!
+end
