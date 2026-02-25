@@ -1,13 +1,7 @@
 
-[![Gem Version](https://badge.fury.io/rb/lookup_by.png)][rubygems]
-[![Code Climate](https://codeclimate.com/github/companygardener/lookup_by.png)][codeclimate]
-
-[rubygems]:    https://rubygems.org/gems/lookup_by
-[codeclimate]: https://codeclimate.com/github/companygardener/lookup_by
-
 # LookupBy
 
-Cache lookup tables in one line. LookupBy turns `Status["shipped"]` into an in-memory read — 300× faster than a database query, thread-safe, and automatic.
+Cache lookup tables in one line. LookupBy turns <small>`Status["shipped"]`</small> into an in-memory read — 300× faster than a database query, thread-safe, and automatic.
 
 * Look up by any column — not just `name` or `id`
 * Automatic caching — read-through, write-through, or LRU
@@ -18,7 +12,7 @@ Cache lookup tables in one line. LookupBy turns `Status["shipped"]` into an in-m
 
 * Rails 7.0+ (_tested on 7.0, 7.1, 7.2, 8.0, 8.1_)
 * Ruby 3.1+ (_tested on 3.1, 3.2, 3.3, 3.4, 4.0_)
-* PostgreSQL 9.2+
+* PostgreSQL 12+
 
 ### Links
 
@@ -355,6 +349,23 @@ This provides: `Given I reload the cache for $plural_class_name`
   = f.input :status
   = f.input :status, :as => :radio
 ```
+
+# Benchmarks
+
+Measured with `benchmark-ips` on PostgreSQL (Apple M3 Max):
+
+| Mode | Example | Lookups/s | vs. no cache |
+|------|---------|----------:|:------------:|
+| **Full cache** | `cache: true` | 2.5M | 316× faster |
+| **LRU cache** (99% hot) | `cache: 100` | 320K | 40× faster |
+| **LRU cache** (95% hot) | `cache: 100` | 132K | 17× faster |
+| **LRU cache** (90% hot) | `cache: 100` | 72K | 9× faster |
+| **LRU cache** (50% hot) | `cache: 100` | 16K | 2× faster |
+| **No cache** | _(default)_ | 7.9K | — |
+
+Run locally:
+
+    rake benchmark
 
 # Testing
 

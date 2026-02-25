@@ -20,7 +20,7 @@ end
   State.find_or_create_by!(state: name)
 end
 
-%w[97201 98101 80202 73301 60601 33101 02101].each do |code|
+(97000..98000).each do |code|
   PostalCode.find_or_create_by!(postal_code: code)
 end
 
@@ -31,16 +31,35 @@ puts "done\n\n"
 Benchmark.ips do |x|
   x.config(warmup: 2, time: 5)
 
-  x.report("City[]    (no cache)") do
+  x.report("(no cache)          ") do
     City["Portland"]
   end
 
-  x.report("State[]   (full cache)") do
-    State["OR"]
+  hot_zips  = (97000..97009).map(&:to_s)
+  cold_zips = (97010..98000).map(&:to_s)
+
+  x.report("(LRU cache, 50% hot)") do
+    code = rand < 0.5 ? hot_zips.sample : cold_zips.sample
+    PostalCode[code]
   end
 
-  x.report("PostalCode[] (LRU cache)") do
-    PostalCode["97201"]
+  x.report("(LRU cache, 90% hot)") do
+    code = rand < 0.9 ? hot_zips.sample : cold_zips.sample
+    PostalCode[code]
+  end
+
+  x.report("(LRU cache, 95% hot)") do
+    code = rand < 0.95 ? hot_zips.sample : cold_zips.sample
+    PostalCode[code]
+  end
+
+  x.report("(LRU cache, 99% hot)") do
+    code = rand < 0.99 ? hot_zips.sample : cold_zips.sample
+    PostalCode[code]
+  end
+
+  x.report("(full cache)        ") do
+    State["OR"]
   end
 
   x.compare!
