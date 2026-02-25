@@ -46,7 +46,9 @@ module LookupBy
 
           lookup_by_disable :destroy, :destroy_all, :delete, :delete_all
 
-          # TODO: check for a db unique constraint or Rails validation
+          unless connection.indexes(table_name).any? { |i| i.unique && i.columns == [field.to_s] }
+            Rails.logger.warn "lookup_by: #{self}.#{field} lacks a unique index — lookups may return stale data"
+          end
 
           unless field == :name || column_names.include?("name")
             alias_attribute :name, field
