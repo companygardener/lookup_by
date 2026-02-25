@@ -37,4 +37,11 @@ task :benchmark do
   ruby "benchmark/run"
 end
 
+namespace :benchmark do
+  desc "Run multithreaded benchmarks"
+  task :threads do
+    ruby "benchmark/threads"
+  end
+end
+
 task :default => :spec

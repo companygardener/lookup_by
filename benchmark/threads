@@ -1,0 +1,130 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "combustion"
+
+Combustion.initialize! :active_record
+
+require "lookup_by/caching/lru"
+require "lookup_by/caching/safe_lru"
+
+# --- Helpers ------------------------------------------------------------------
+
+def threaded_ops_per_sec(thread_count, duration: 3, &block)
+  barrier = Queue.new
+  counts  = Array.new(thread_count, 0)
+
+  threads = thread_count.times.map { |i|
+    Thread.new {
+      barrier.pop # wait for go signal
+      stop = Process.clock_gettime(Process::CLOCK_MONOTONIC) + duration
+      n = 0
+      while Process.clock_gettime(Process::CLOCK_MONOTONIC) < stop
+        block.call
+        n += 1
+      end
+      counts[i] = n
+    }
+  }
+
+  # release all threads at once
+  thread_count.times { barrier << :go }
+  threads.each(&:join)
+
+  total = counts.sum
+  [total.to_f / duration, total.to_f / duration / thread_count]
+end
+
+def format_ops(ops)
+  if ops >= 1_000_000
+    "%10.2fM" % (ops / 1_000_000.0)
+  elsif ops >= 1_000
+    "%10.2fK" % (ops / 1_000.0)
+  else
+    "%10.1f " % ops
+  end
+end
+
+def run_group(title, thread_counts, scenarios)
+  puts "=== #{title} ==="
+
+  header = "Threads"
+  scenarios.each { |name, _| header += " | %15s" % name }
+  header += " | Overhead"
+  puts header
+
+  thread_counts.each do |tc|
+    results = scenarios.map { |_, blk| threaded_ops_per_sec(tc, &blk) }
+
+    row = "%7d" % tc
+    results.each { |total, _| row += " | %13s/s" % format_ops(total).strip }
+
+    if results.length == 2
+      fast, slow = results[0][0], results[1][0]
+      if fast > 0
+        overhead = ((fast - slow) / fast * 100)
+        row += " | %6.1f%%" % overhead
+      end
+    end
+
+    puts row
+  end
+  puts
+end
+
+# --- Seed data ----------------------------------------------------------------
+
+puts "Seeding benchmark data..."
+
+(97000..97200).each do |code|
+  PostalCode.find_or_create_by!(postal_code: code)
+end
+
+puts "done\n\n"
+
+# --- Benchmark 1: Raw LRU vs SafeLRU -----------------------------------------
+
+SIZE = 100
+KEYS = (0...SIZE).to_a
+
+lru      = LookupBy::Caching::LRU.new(SIZE)
+safe_lru = LookupBy::Caching::SafeLRU.new(SIZE)
+
+KEYS.each { |k| lru[k] = k; safe_lru[k] = k }
+
+THREAD_COUNTS = [1, 2, 4, 8, 16]
+
+run_group(
+  "LRU vs SafeLRU (reads)",
+  THREAD_COUNTS,
+  [
+    ["LRU ops",     -> { lru[KEYS.sample] }],
+    ["SafeLRU ops", -> { safe_lru[KEYS.sample] }],
+  ]
+)
+
+# --- Benchmark 2: Full Cache lookup (safe vs unsafe) --------------------------
+
+SafePC = Class.new(ActiveRecord::Base) {
+  self.table_name = "postal_codes"
+  lookup_by :postal_code, cache: 100, safe: true
+}
+
+UnsafePC = Class.new(ActiveRecord::Base) {
+  self.table_name = "postal_codes"
+  lookup_by :postal_code, cache: 100, safe: false
+}
+
+# Warm both caches
+codes = (97000..97099).map(&:to_s)
+codes.each { |c| SafePC[c]; UnsafePC[c] }
+
+run_group(
+  "Cache lookup: safe vs unsafe (hot reads)",
+  THREAD_COUNTS,
+  [
+    ["unsafe ops",  -> { UnsafePC[codes.sample] }],
+    ["safe ops",    -> { SafePC[codes.sample] }],
+  ]
+)
