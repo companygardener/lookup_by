@@ -28,50 +28,50 @@ jobs:
       matrix:
         include:
           # Rails 6.0 (EOL)
-          - { ruby: '2.7', rails: 'rails-6.0' }
-          - { ruby: '3.1', rails: 'rails-6.0' }
-          - { ruby: '3.2', rails: 'rails-6.0' }
-          - { ruby: '3.3', rails: 'rails-6.0' }
+          - { ruby: '2.7', rails: 'rails_6.0' }
+          - { ruby: '3.1', rails: 'rails_6.0' }
+          - { ruby: '3.2', rails: 'rails_6.0' }
+          - { ruby: '3.3', rails: 'rails_6.0' }
 
           # Rails 6.1 (EOL)
-          - { ruby: '2.7', rails: 'rails-6.1' }
-          - { ruby: '3.1', rails: 'rails-6.1' }
-          - { ruby: '3.2', rails: 'rails-6.1' }
-          - { ruby: '3.3', rails: 'rails-6.1' }
+          - { ruby: '2.7', rails: 'rails_6.1' }
+          - { ruby: '3.1', rails: 'rails_6.1' }
+          - { ruby: '3.2', rails: 'rails_6.1' }
+          - { ruby: '3.3', rails: 'rails_6.1' }
 
           # Rails 7.0
-          - { ruby: '2.7', rails: 'rails-7.0' }
-          - { ruby: '3.1', rails: 'rails-7.0' }
-          - { ruby: '3.2', rails: 'rails-7.0' }
-          - { ruby: '3.3', rails: 'rails-7.0' }
-          - { ruby: '3.4', rails: 'rails-7.0' }
-          - { ruby: '4.0', rails: 'rails-7.0' }
+          - { ruby: '2.7', rails: 'rails_7.0' }
+          - { ruby: '3.1', rails: 'rails_7.0' }
+          - { ruby: '3.2', rails: 'rails_7.0' }
+          - { ruby: '3.3', rails: 'rails_7.0' }
+          - { ruby: '3.4', rails: 'rails_7.0' }
+          - { ruby: '4.0', rails: 'rails_7.0' }
 
           # Rails 7.1
-          - { ruby: '3.1', rails: 'rails-7.1' }
-          - { ruby: '3.2', rails: 'rails-7.1' }
-          - { ruby: '3.3', rails: 'rails-7.1' }
-          - { ruby: '3.4', rails: 'rails-7.1' }
-          - { ruby: '4.0', rails: 'rails-7.1' }
+          - { ruby: '3.1', rails: 'rails_7.1' }
+          - { ruby: '3.2', rails: 'rails_7.1' }
+          - { ruby: '3.3', rails: 'rails_7.1' }
+          - { ruby: '3.4', rails: 'rails_7.1' }
+          - { ruby: '4.0', rails: 'rails_7.1' }
 
           # Rails 7.2
-          - { ruby: '3.1', rails: 'rails-7.2' }
-          - { ruby: '3.2', rails: 'rails-7.2' }
-          - { ruby: '3.3', rails: 'rails-7.2' }
-          - { ruby: '3.4', rails: 'rails-7.2' }
-          - { ruby: '4.0', rails: 'rails-7.2' }
+          - { ruby: '3.1', rails: 'rails_7.2' }
+          - { ruby: '3.2', rails: 'rails_7.2' }
+          - { ruby: '3.3', rails: 'rails_7.2' }
+          - { ruby: '3.4', rails: 'rails_7.2' }
+          - { ruby: '4.0', rails: 'rails_7.2' }
 
           # Rails 8.0
-          - { ruby: '3.2', rails: 'rails-8.0' }
-          - { ruby: '3.3', rails: 'rails-8.0' }
-          - { ruby: '3.4', rails: 'rails-8.0' }
-          - { ruby: '4.0', rails: 'rails-8.0' }
+          - { ruby: '3.2', rails: 'rails_8.0' }
+          - { ruby: '3.3', rails: 'rails_8.0' }
+          - { ruby: '3.4', rails: 'rails_8.0' }
+          - { ruby: '4.0', rails: 'rails_8.0' }
 
           # Rails 8.1
-          - { ruby: '3.2', rails: 'rails-8.1' }
-          - { ruby: '3.3', rails: 'rails-8.1' }
-          - { ruby: '3.4', rails: 'rails-8.1' }
-          - { ruby: '4.0', rails: 'rails-8.1' }
+          - { ruby: '3.2', rails: 'rails_8.1' }
+          - { ruby: '3.3', rails: 'rails_8.1' }
+          - { ruby: '3.4', rails: 'rails_8.1' }
+          - { ruby: '4.0', rails: 'rails_8.1' }
 
     env:
       BUNDLE_GEMFILE: gemfiles/${{ matrix.rails }}.gemfile
