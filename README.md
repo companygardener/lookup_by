@@ -363,9 +363,28 @@ Measured with `benchmark-ips` on PostgreSQL (Apple M3 Max):
 | **LRU cache** (50% hot) | `cache: 100` | 16K | 2× faster |
 | **No cache** | _(default)_ | 7.9K | — |
 
+### Thread safety overhead
+
+Measured with 1–16 threads on the same hardware:
+
+| Threads | LRU ops/s | SafeLRU ops/s | Overhead |
+|--------:|----------:|--------------:|---------:|
+| 1 | 7.1M | 4.2M | 41% |
+| 4 | 7.8M | 4.6M | 41% |
+| 8 | 8.8M | 5.2M | 41% |
+| 16 | 9.7M | 5.7M | 41% |
+
+| Threads | unsafe ops/s | safe ops/s | Overhead |
+|--------:|-------------:|-----------:|---------:|
+| 1 | 942K | 719K | 24% |
+| 4 | 1.0M | 715K | 29% |
+| 8 | 1.1M | 865K | 23% |
+| 16 | 1.2M | 919K | 25% |
+
 Run locally:
 
     rake benchmark
+    rake benchmark:threads
 
 # Testing
 
