@@ -138,6 +138,33 @@ Order.column_names
 => ["order_id", "status_id"]
 ```
 
+### Querying with lookup values
+
+`where`, `where.not`, and `group` resolve lookup names to foreign keys automatically:
+
+```ruby
+# where
+Order.where(status: "paid")
+Order.where(status: ["paid", "shipped"])
+
+# where.not
+Order.where.not(status: "returned")
+Order.where.not(status: ["returned", "cancelled"])
+
+# group
+Order.group(:status)
+
+# chaining
+Order.where(status: "paid").group(:status)
+```
+
+Foreign keys and string conditions pass through unchanged:
+
+```ruby
+Order.where(status_id: 1)
+Order.where("status_id = ?", 1)
+```
+
 ### Seed the lookup table
 
 ```ruby
