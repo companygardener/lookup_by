@@ -10,6 +10,7 @@ group :development, :test do
   gem "combustion"
   gem "rspec"
   gem "rspec-rails"
+  gem "logger"
   gem "pg", platform: :ruby
   gem "simplecov", "~> 0.21.2", require: false
   gem "pry", require: false

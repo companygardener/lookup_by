@@ -202,6 +202,76 @@ describe LookupBy::Association, 'scopes' do
   end
 end
 
+describe LookupBy::Association, '.where' do
+  before do
+    City.create!(city: 'Chicago')
+    City.create!(city: 'Madison')
+    State.seed('Illinois', 'Wisconsin')
+  end
+
+  let!(:chicago_il) do
+    Address.create!(
+      address:        '100 Main St, Chicago, IL',
+      city_id:        City['Chicago'].id,
+      state_id:       State['Illinois'].id,
+      street_id:      Street.create!(street: '100 Main St').id,
+      postal_code_id: PostalCode.create!(postal_code: '60601').id
+    )
+  end
+
+  let!(:madison_wi) do
+    Address.create!(
+      address:        '200 State St, Madison, WI',
+      city_id:        City['Madison'].id,
+      state_id:       State['Wisconsin'].id,
+      street_id:      Street.create!(street: '200 State St').id,
+      postal_code_id: PostalCode.create!(postal_code: '53703').id
+    )
+  end
+
+  it 'resolves a single lookup value' do
+    expect(Address.where(city: 'Chicago')).to eq [chicago_il]
+  end
+
+  it 'resolves an array of lookup values' do
+    expect(Address.where(city: ['Chicago', 'Madison'])).to match_array [chicago_il, madison_wi]
+  end
+
+  it 'resolves multiple lookup attributes' do
+    expect(Address.where(city: 'Chicago', state: 'Illinois')).to eq [chicago_il]
+  end
+
+  it 'passes through foreign key columns unchanged' do
+    expect(Address.where(city_id: City['Chicago'].id)).to eq [chicago_il]
+  end
+
+  it 'passes through string conditions unchanged' do
+    expect(Address.where('city_id = ?', City['Chicago'].id)).to eq [chicago_il]
+  end
+
+  it 'supports chaining' do
+    expect(Address.where(city: 'Chicago').where(state: 'Illinois')).to eq [chicago_il]
+  end
+
+  it 'resolves where.not with a single lookup value' do
+    expect(Address.where.not(city: 'Chicago')).to eq [madison_wi]
+  end
+
+  it 'resolves where.not with an array of lookup values' do
+    expect(Address.where.not(city: ['Chicago', 'Madison'])).to eq []
+  end
+
+  it 'resolves group with a lookup symbol' do
+    expect(Address.group(:city).to_sql).to eq Address.group(:city_id).to_sql
+  end
+
+  it 'resolves group chained with where' do
+    expect(Address.where(state: 'Illinois').group(:city).to_sql).to eq(
+      Address.where(state_id: State['Illinois'].id).group(:city_id).to_sql
+    )
+  end
+end
+
 context 'validation' do
   subject { Account.new(phone_number: "invalid") }
 

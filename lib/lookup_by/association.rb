@@ -32,11 +32,73 @@ module LookupBy
         end
 
         singleton_class.class_eval do
-          attr_reader :lookups
+          attr_reader :lookups, :lookup_associations
         end
 
         @lookups ||= []
         @lookups << field
+
+        @lookup_associations ||= {}
+        @lookup_associations[field] = { foreign_key: (options[:foreign_key] || "#{field}_id").to_sym, class_name: (options[:class_name] || field).to_s.camelize }
+
+        unless defined?(@lookup_where_prepended)
+          @lookup_where_prepended = true
+          model = self
+
+          resolve_lookup_hash = ->(hash) {
+            resolved = {}
+
+            hash.each do |key, value|
+              if (assoc = model.lookup_associations[key])
+                klass = assoc[:class_name].constantize
+                resolved_value = Array === value ? value.map { |v| klass[v] } : klass[value]
+                resolved[assoc[:foreign_key]] = resolved_value
+              else
+                resolved[key] = value
+              end
+            end
+
+            resolved
+          }
+
+          where_mod = Module.new do
+            define_method(:where) do |*args, **kwargs, &block|
+              if kwargs.any? && model.lookup_associations
+                super(*args, **resolve_lookup_hash.(kwargs), &block)
+              else
+                super(*args, **kwargs, &block)
+              end
+            end
+          end
+
+          relation_mod = Module.new do
+            define_method(:build_where_clause) do |opts, *rest|
+              if opts.is_a?(Hash) && model.lookup_associations
+                opts = resolve_lookup_hash.(opts)
+              end
+
+              super(opts, *rest)
+            end
+
+            define_method(:group) do |*args|
+              args = args.map do |arg|
+                if arg.is_a?(Symbol) && (assoc = model.lookup_associations[arg])
+                  assoc[:foreign_key]
+                else
+                  arg
+                end
+              end
+
+              super(*args)
+            end
+          end
+
+          extend where_mod
+
+          relation_class = const_get(:ActiveRecord_Relation) rescue nil
+          relation_class&.prepend(where_mod)
+          relation_class&.prepend(relation_mod)
+        end
 
         scope_name =
           if options[:scope] == false

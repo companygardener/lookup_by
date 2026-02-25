@@ -12,6 +12,7 @@ group :development, :test do
 
   gem 'rspec'
   gem 'rspec-rails'
+  gem 'logger'
 
   gem "pg", platform: :ruby
   # gem "activerecord-jdbcpostgresql-adapter", platform: :jruby
