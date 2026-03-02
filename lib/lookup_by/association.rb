@@ -130,10 +130,18 @@ module LookupBy
         class_name = class_name.to_s.camelize
 
         begin
-          klass = class_name.constantize
+          qualified = "#{module_parent}::#{class_name}"
+          klass = qualified.constantize
+          class_name = qualified
         rescue NameError
-          raise Error, "uninitialized constant #{class_name}, call lookup_for with `class_name` option if it doesn't match the foreign key"
+          begin
+            klass = class_name.constantize
+          rescue NameError
+            raise Error, "uninitialized constant #{class_name}, call lookup_for with `class_name` option if it doesn't match the foreign key"
+          end
         end
+
+        @lookup_associations[field][:class_name] = class_name
 
         raise Error, "class #{class_name} does not use lookup_by" unless klass.respond_to?(:lookup)
 

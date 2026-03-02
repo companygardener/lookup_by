@@ -29,6 +29,12 @@ ActiveRecord::Schema.define do
 
   create_lookup_table :paths, schema: 'traffic', id: :uuid
 
+  create_lookup_table :taxonomy_categories, lookup_column: :category
+
+  create_table :taxonomy_items do |t|
+    t.belongs_to :category
+  end
+
   create_lookup_table :accounts do |t|
     t.belongs_to :phone_number
   end

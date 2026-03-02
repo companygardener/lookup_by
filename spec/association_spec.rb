@@ -113,6 +113,25 @@ describe LookupBy::Association do
     end
   end
 
+  context "Taxonomy::Item.lookup_for :category (namespaced)" do
+    before do
+      Taxonomy::Category.create!(category: "Science")
+    end
+
+    subject { Taxonomy::Item.new }
+
+    it_behaves_like "a lookup for", :category
+
+    it "resolves the class within the module namespace" do
+      subject.category = "Science"
+      expect(subject.category).to eq "Science"
+    end
+
+    it "stores the fully qualified class name in lookup_associations" do
+      expect(Taxonomy::Item.lookup_associations[:category][:class_name]).to eq "Taxonomy::Category"
+    end
+  end
+
   # spec/internal/lib/missing.rb
   context "Missing.lookup_for :city" do
     it "does not raise foreign key error when table hasn't been created" do

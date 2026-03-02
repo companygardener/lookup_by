@@ -21,5 +21,6 @@ group :development, :test do
 
   gem "pry", require: false
 
+  gem "benchmark"
   gem "benchmark-ips"
 end
