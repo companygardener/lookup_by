@@ -13,6 +13,15 @@
 module LookupBy
   module Association
     module MacroMethods
+      def self.model_dirs
+        @model_dirs ||= begin
+          models_path = Rails.root.join("app", "models")
+          Dir.children(models_path)
+            .select { |f| ::File.directory?(models_path.join(f)) }
+            .reject { |f| f == "concerns" }
+        end
+      end
+
       # @see https://practicingruby.com/articles/closures-are-complicated
       def lookup_for field, options = {}
         begin
@@ -129,11 +138,38 @@ module LookupBy
         class_name = options[:class_name] || field
         class_name = class_name.to_s.camelize
 
+        klass = nil
+
+        # Try fully qualified: ModuleParent::ClassName
         begin
           qualified = "#{module_parent}::#{class_name}"
           klass = qualified.constantize
           class_name = qualified
         rescue NameError
+        end
+
+        # If the field is prefixed with a model subdirectory name, strip it and
+        # try the namespaced constant. e.g. :ach_file_type with an app/models/ach/
+        # directory resolves to ACH::FileType.
+        unless klass
+          MacroMethods.model_dirs.each do |dir|
+            prefix = "#{dir}_"
+            stripped = field.to_s.delete_prefix(prefix)
+            next if stripped == field.to_s
+
+            begin
+              mod = dir.camelize.constantize
+              qualified = "#{mod}::#{stripped.camelize}"
+              klass = qualified.constantize
+              class_name = qualified
+              break
+            rescue NameError
+            end
+          end
+        end
+
+        # Fall back to global lookup: ClassName
+        unless klass
           begin
             klass = class_name.constantize
           rescue NameError

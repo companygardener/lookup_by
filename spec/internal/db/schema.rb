@@ -35,6 +35,10 @@ ActiveRecord::Schema.define do
     t.belongs_to :category
   end
 
+  create_table :catalog_entries do |t|
+    t.belongs_to :taxonomy_category
+  end
+
   create_lookup_table :accounts do |t|
     t.belongs_to :phone_number
   end

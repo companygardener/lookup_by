@@ -91,6 +91,7 @@ module LookupBy
     end
 
     def seed(*values)
+      values = values.first if values.length == 1 && values.first.is_a?(Array)
       @klass.transaction(requires_new: true) do
         values.map { |value| @klass.where(@field => value).first_or_create! }
       end

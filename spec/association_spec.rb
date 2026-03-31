@@ -132,6 +132,25 @@ describe LookupBy::Association do
     end
   end
 
+  context "CatalogEntry.lookup_for :taxonomy_category (subdirectory prefix resolution)" do
+    before do
+      Taxonomy::Category.create!(category: "Biology")
+    end
+
+    subject { CatalogEntry.new }
+
+    it_behaves_like "a lookup for", :taxonomy_category
+
+    it "resolves the class via model subdirectory prefix" do
+      subject.taxonomy_category = "Biology"
+      expect(subject.taxonomy_category).to eq "Biology"
+    end
+
+    it "stores the fully qualified class name in lookup_associations" do
+      expect(CatalogEntry.lookup_associations[:taxonomy_category][:class_name]).to eq "Taxonomy::Category"
+    end
+  end
+
   # spec/internal/lib/missing.rb
   context "Missing.lookup_for :city" do
     it "does not raise foreign key error when table hasn't been created" do
