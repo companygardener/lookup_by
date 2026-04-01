@@ -25,4 +25,4 @@ module LookupBy
   end
 end
 
-::SimpleForm::FormBuilder.send :include, LookupBy::Hooks::SimpleForm
+::SimpleForm::FormBuilder.send :prepend, LookupBy::Hooks::SimpleForm
