@@ -310,6 +310,36 @@ describe LookupBy::Association, '.where' do
   end
 end
 
+describe LookupBy::Association, '.joins' do
+  it 'supports joins on a lookup association' do
+    expect { Address.joins(:city).to_a }.not_to raise_error
+  end
+
+  it 'generates a valid INNER JOIN' do
+    sql = Address.joins(:city).to_sql
+    expect(sql).to match(/INNER JOIN/)
+    expect(sql).to match(/"cities"/)
+  end
+
+  it 'supports joins with where conditions' do
+    City.create!(city: 'Denver')
+    address = Address.create!(
+      address:        '300 Main St, Denver, CO',
+      city_id:        City['Denver'].id,
+      state_id:       State.create!(state: 'CO').id,
+      street_id:      Street.create!(street: '300 Main St').id,
+      postal_code_id: PostalCode.create!(postal_code: '80201').id
+    )
+
+    results = Address.joins(:city).where(cities: { city: 'Denver' })
+    expect(results).to eq [address]
+  end
+
+  it 'supports joins on multiple lookup associations' do
+    expect { Address.joins(:city, :state).to_a }.not_to raise_error
+  end
+end
+
 context 'validation' do
   subject { Account.new(phone_number: "invalid") }
 
