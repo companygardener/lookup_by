@@ -186,10 +186,10 @@ module LookupBy
 
         Rails.logger.error "foreign key `#{foreign_key}` is required on #{self}" unless attribute_names.include?(foreign_key.to_s)
 
-        belongs = options[:belongs_to] || false
+        belongs = options.fetch(:belongs_to, true)
 
         class_eval <<-BELONGS_TO, __FILE__, __LINE__.next if belongs
-          belongs_to :#{field}, class_name: "#{class_name}", foreign_key: :#{foreign_key}, autosave: false, optional: true
+          belongs_to :#{field}, class_name: "#{klass.name}", foreign_key: :#{foreign_key}, autosave: false, optional: true
         BELONGS_TO
 
         class_eval <<-SCOPES, __FILE__, __LINE__.next if scope_name
