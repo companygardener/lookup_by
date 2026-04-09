@@ -135,6 +135,10 @@ shared_examples "a strict cache" do
     expect { subject.create(name: "new") }.to_not change(subject, :count)
   end
 
+  it "delegates .count with a column name to the database" do
+    expect(subject.count(subject.lookup.field)).to be_a(Integer)
+  end
+
   it "caches .all" do
     new = subject.create(name: 'add')
     expect(subject.all.to_a).not_to include(new)
@@ -159,6 +163,10 @@ end
 shared_examples "a read-through proxy" do
   it "reloads .count" do
     expect { subject.create(name: "new") }.to change(subject, :count)
+  end
+
+  it "allows .count with a column name" do
+    expect(subject.count(subject.lookup.field)).to be_a(Integer)
   end
 
   it "reloads .all" do
