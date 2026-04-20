@@ -12,3 +12,5 @@ coverage/
 Gemfile.lock
 gemfiles/*.lock
 tags
+vendor/
+gemfiles/vendor/
