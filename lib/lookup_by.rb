@@ -5,6 +5,7 @@ require 'active_support'
 
 module LookupBy
   class Error < StandardError; end
+  class RecordNotFound < ActiveRecord::RecordNotFound; end
 
   mattr_accessor :classes
   self.classes = []
