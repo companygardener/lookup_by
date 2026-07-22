@@ -12,6 +12,8 @@ module LookupBy
   mattr_accessor :mutex
   self.mutex = Mutex.new
 
+  self.fail_loudly = false
+
   UUID_REGEX    = /\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\Z/
   UUID_REGEX_V4 = /\A\h{8}-\h{4}-4\h{3}-[89aAbB]\h{3}-\h{12}\Z/
 
@@ -26,6 +28,8 @@ module LookupBy
   end
 
   class << self
+    attr_accessor :fail_loudly
+
     def register(klass)
       mutex.synchronize do
         self.classes << klass unless classes.include?(klass)

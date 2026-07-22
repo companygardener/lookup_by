@@ -314,6 +314,25 @@ Can be useful to handle `params` that are not required.
 lookup_by :column_name, allow_blank: true
 ```
 
+### Fail loudly on initialization errors
+
+By default, LookupBy silently skips initialization if the database is
+unreachable at boot (logging the error and moving on). This avoids breaking the
+situations where the database is expectedly unavailable (originally, this was
+added to handle precompiling assets on build nodes), but it means that a live
+instance of the app can end up in a broken state if the database is unreachable
+when it originally boots.
+
+Set `fail_loudly` to raise instead, so broken apps fail fast:
+
+```ruby
+# config/initializers/lookup_by.rb
+LookupBy.fail_loudly = true
+```
+
+This is recommended, but opt-in for now. The setting may become the default behavior
+in a future major release.
+
 ### Threadsafety
 
 Disable threadsafety using the `:safe` option.

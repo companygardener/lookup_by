@@ -24,6 +24,8 @@ module LookupBy
         begin
           return unless table_exists?
         rescue => error
+          raise error if options.fetch(:fail_loudly, LookupBy.fail_loudly)
+
           Rails.logger.error "lookup_by caught #{error.class.name} when connecting - skipping initialization (#{error.inspect})"
           return
         end
